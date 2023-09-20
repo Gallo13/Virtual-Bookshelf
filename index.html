@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>My Virtual Bookshelf</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cormorant Garamond">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://kit.fontawesome.com/efc02a65e2.js" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Cormorant Garamond", serif;
+  background-color: #1B201E;
+  color: #C4BAA6;
+  letter-spacing: 0em;
+}
+
+/* Style the header */
+header {
+  padding: 00px;
+  text-align: center;
+}
+
+/* Container for flexboxes */
+.section {
+  display: -webkit-flex;
+  display: flex;
+  align-self: center;
+  flex-direction: row;
+}
+
+/* Style the couch picture */
+.couch {
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+
+/* Style the Adding Content Section */
+adding {
+  -webkit-flex: 3;
+  -ms-flex: 3;
+  flex: 3;
+  background-color: #f1f1f1;
+  padding: 10px;
+}
+
+/* Style the footer */
+footer {
+  padding: 10px;
+  text-align: center;
+}
+
+/* Container with library image and My Virtual Bookshelf */
+.headContainer
+{
+    position: relative;
+    text-align: center;
+}
+
+/* Centers My Virtual Bookshelf in Library Image */
+.centered
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 135px;
+}
+
+.centeredTop
+{
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 25px;
+}
+
+.textbox
+{
+border: none;
+border-bottom: 2px solid #502B09;
+background-color: #1B201E;
+color: #C4BAA6;
+}
+
+/* Responsive layout - makes the menu and the content (inside the section) sit on top of each other instead of next to each other */
+@media (max-width: 600px) {
+  section {
+    -webkit-flex-direction: column;
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+<body>
+<!-- HEADER ------------------------------------------------------------------>
+<header class="w3-display-container w3-mobile">
+  <div class="headContainer">
+    <img class="w3-image" src='images/library.jpg' alt="Library" style="width:100%;">
+    <div class="centered w3-animate-opacity">
+      <p style="font-size:10vw"> My Virtual Bookshelf</p>
+    </div>
+    <div class="centeredTop" style="font-size:1vw">@Gallo13</div>
+  </div>
+</header>
+<!-- Adding to Library -------------------------------------------------------->
+<div class="w3-display-container section w3-mobile w3-responsive">
+  <div class="w3-container couch" style="padding-left:0px"><img class="w3-image" src="images/couch.jpg" style="width:100%; height:100%;"></div>
+
+  <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+    <p class='w3-padding-large' style="font-size:4.5vw;">Add a Book to the Library</p>
+    <form class="w3-container was-validated" style="font-size:1vw;" method="POST">
+        <label for="title">Title:</label>
+        <input class="w3-input textbox" type="text" name="title" id="title"><br>
+
+        <div class="w3-half">
+            <label for="author_fname">Author First Name:</label>
+            <input class="w3-input textbox" type="text" name="author_fname" id="author_fname" value=""><br>
+        </div>
+
+        <div class="w3-half">
+            <label for="author_lname">Author Last Name:</label>
+            <input class="w3-input textbox" type="text" name="author_lname" id="author_lname" value=""><br>
+        </div>
+
+        <label for="genre">Genre:</label>
+        <input class="w3-input textbox" type="text" name="genre" id="genre" value=""><br>
+
+        <label for="publisher">Publisher:</label>
+        <input class="w3-input textbox" type="text" name="publisher" id="publisher" value=""><br>
+
+        <div class="w3-half">
+            <label for="pages">Pages:</label>
+            <input class="w3-input textbox" type="number" name="pages" id="pages" min="1" value=""><br>
+        </div>
+
+        <!---
+        <div class="w3-half">
+            <label for="rating">Rating: (Scale of 1 - 5)</label>
+            <input class="w3-input textbox" type="number" id="rating" min="1" max="5" value=""><br><br>
+        </div>
+        -->
+        <div class="w3-half" style="back-ground:#1B201E">
+            <label for="rating">Rating:</label>
+            <select class="w3-select" name="rating" id="rating" style="back-ground:#1B201E">
+              <option value="" selected>1 Star </option>
+              <option value="2">2 Stars</option>
+              <option value="3">3 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="5">5 Stars</option>
+            </select>
+        </div>
+
+        <div class="w3-container">
+            <input class="w3-btn w3-round-xxlarge w3-ripple" type="submit" value="Add" style="background-color:#502B09">
+            <!-- onclick="alert('Your book was added!')"  -->
+            <input class="w3-btn w3-round-xxlarge w3-ripple" type="reset" value="Clear" style="background-color:#502B09">
+        </div>
+    </form>
+  </div>
+</div>
+<!-- Purpose and Functionality ------------------------------------------------>
+<div class="w3-display-container section w3-mobile w3-responsive">
+  <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+    <p class='w3-padding-large' style="font-size:4.5vw;">Purpose and Functionality</p>
+    <p class='w3-padding-large w3-center' style="font-size:2vw;">This Virtual Bookshelf serves as a way <br>
+      to store all the books I have read <br>
+      and own. The technologies used <br>
+      to make this website are Python, <br>
+      MySQL, and Flask. This website <br>
+      allows me to update my database.<br>
+      This project is scalable and I <br>
+      will add data analytics to query <br>
+      the data and learn more about <br>
+      my reading habits. In the future, <br>
+      future, I will also add a recommender <br>
+      system to find more books that would <br>
+      suit my taste.</p>
+  </div>
+   <div class="w3-container couch" style="padding-right:0px"><img class="w3-image" src="images/table.jpg" style="width:100%; height:100%;"></div>
+</div>
+
+<footer class="w3-mobile w3-responsive w3-padding-24">
+  <button class="w3-button w3-circle w3-ripple"><i class="fa-brands fa-linkedin-in"></i></button>
+  <button class="w3-button w3-circle w3-ripple"><i class="fa-brands fa-github"></i></button>
+</footer>
+
+</body>
+</html>
