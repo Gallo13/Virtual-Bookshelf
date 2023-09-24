@@ -1,3 +1,9 @@
+Next to be done: 
+(1) fix the database so it will accept UUID4 for the primary key. Currently, I have the primary key set to char(3), which will not accommodate UUID4.
+(2) throw error messages if nothing is in the input boxes
+(3) add another page for statistics on database
+(4) add recommender system
+
 # Virtual-Bookshelf
 Virtual bookshelf Website using Python, Flask, HTML, and MySQL
 
