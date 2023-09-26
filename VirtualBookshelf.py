@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Created date: 09/01/2023
-# Last Modified: 09/01/2023
+# Last Modified: 09/25/2023
 # Description: Virtual Bookshelf Webapp/Storage
 # Python, Flask, MySQL, ML Recommender
 
@@ -15,7 +15,7 @@ mydb = mysql.connector.connect(
     host='localhost',
     user='root',
     password='galloGiallo13',
-    database='bookshelf'
+    database='bookshelf2'
 )
 
 
@@ -31,71 +31,140 @@ def get_data():
         pages = request.form['pages']
         rating = request.form['rating']
 
-        try:
-            with mydb.cursor() as cursor:
-                # BOOK TITLE ------------------------------------------------------------------------------------------
-                books_insert = "INSERT INTO books (bID, title, pages, rating) VALUES (%s, %s, %s, %s)"
-                book_value = cursor.execute(books_insert, (str(uuid4()), title, pages, rating))
-                if book_value > 0:
-                    book_query = ("SELECT bID "
-                                  "FROM books"
-                                  "WHERE title = %s")
-                    print("Book already exists", book_query)
-                else:
-                    print("Book added", book_value)
+        print("Title: ", title,  "Author: ", author_fname, author_lname, "Genre: ", genre, "Publisher: ", publisher,
+              "Pages: ", pages, "Rating: ", rating)
 
-                # AUTHOR NAME ------------------------------------------------------------------------------------------
-                authors_insert = "INSERT INTO authors (aID, firstname, lastname) VALUES (%s, %s, %s)"
-                author_value = cursor.execute(authors_insert, (str(uuid4()), author_fname, author_lname))
-                author_query = ("SELECT DISTINCT authors.aID "
-                                "FROM authors JOIN book_author "
-                                "ON authors.aID = book_author.aID "
-                                "WHERE firstname = %s AND lastname = %s")
-                if author_value > 0:
-                    print("Author already exists", author_query)
-                else:
-                    print("Author added", author_value)
-                    # BOOK AUTHOR---------------------------------------------------------------------------------------
-                    book_author_insert = "INSERT INTO book_author (bID, aID) VALUES (%s, %s, %s)"
-                    book_author_value = cursor.execute(book_author_insert, (str(uuid4()), book_query, author_query))
-                    print("Book_Author added", book_author_value)
+        # try:
+        #    with mydb.cursor() as cursor:
+        cursor = mydb.cursor()
+        # BOOK TITLE ------------------------------------------------------------------------------------------
+        # SQL query to check if book exists
+        book_query = """SELECT bID FROM books WHERE title='%s' AND pages=%s;""" % (title, int(pages))
 
-                # PUBLISHER NAME ---------------------------------------------------------------------------------------
-                publishers_insert = "INSERT INTO publishers (pID, name) VALUES (%s, %s)"
-                publisher_value = cursor.execute(publishers_insert, (str(uuid4()), publisher))
-                publisher_query = ("SELECT DISTINCT publishers.pID "
-                                   "FROM publishers JOIN book_publisher "
-                                   "ON publishers.pID = book_publisher.pID "
-                                   "WHERE name = %s")
-                if publisher_value > 0:
-                    print("Publisher already exists", publisher_query)
-                else:
-                    print("Publisher added", publisher_value)
-                    # BOOK PUBLISHER -----------------------------------------------------------------------------------
-                    book_publisher_insert = "INSERT INTO book_publisher (bID, pID) VALUES (%s, %s, %s)"
-                    book_pub_value = cursor.execute(book_publisher_insert, (str(uuid4()), book_query, publisher_query))
-                    print("Book_Publisher added", book_pub_value)
+        if book_query is True:
+            print("Book already exists", title)
+        else:
+            # Inserts book into database
+            books_insert = ("""INSERT INTO books (bID, title, pages, rating) VALUES ('%s', '%s', %s, %s);"""
+                            % (str(uuid4()), title, int(pages), int(rating)))
+            cursor.execute(books_insert)
+            # Executes query
+            cursor.execute(book_query)
+            # Stores query results into variable
+            book_value = cursor.fetchone()
+            print("Book added: ", title, book_value)
 
-                # GENRE ------------------------------------------------------------------------------------------------
-                    sql_genre_insert = "INSERT INTO genres (gID, name) VALUES (%s, %s)"
-                    genre_value = cursor.execute(sql_genre_insert, (str(uuid4()), genre))
-                    genre_query = ("SELECT DISTINCT genre.gID "
-                                   "FROM genre JOIN book_genre "
-                                   "ON genre.gID = book_genre.gID "
-                                   "WHERE genre = %s")
-                    if genre_value > 0:
-                        print("Genre already exists", genre_query)
-                    else:
-                        print("Genre added", genre_value)
-                        # BOOK GENRE -----------------------------------------------------------------------------------
-                        book_genre_insert = "INSERT INTO book_genre (bID, gID) VALUES (%s, %s, %s)"
-                        book_genre_value = cursor.execute(book_genre_insert, (str(uuid4()), book_query, genre_query))
-                        print("Book_Genre added", book_genre_value)
+        # AUTHOR NAME ------------------------------------------------------------------------------------------
+        # Query to check if author exists
+        author_query = ("""SELECT aID FROM authors WHERE firstname = '%s' AND lastname = '%s';"""
+                        % (author_fname, author_lname))
+        # Checks if author exists
+        if author_query is True:
+            print("Author already exists", author_fname, author_lname)
+        else:
+            # Inserts author into database
+            authors_insert = ("""INSERT INTO authors (aID, firstname, lastname) VALUES ('%s', '%s', '%s');"""
+                              % (str(uuid4()), author_fname, author_lname))
+            cursor.execute(authors_insert)
+            # Stores query results into variable
+            cursor.execute(author_query)
+            author_value = cursor.fetchone()
+            print("Author added: ", author_fname, author_lname,  author_value)
 
-                # mydb.commit()
-                print(cursor.rowcount, "record inserted.")
-        finally:
-            mydb.close()
+        # BOOK AUTHOR---------------------------------------------------------------------------------------
+        book_value2 = book_value[0]
+        print("Book_ID: ", book_value2)
+        author_value2 = author_value[0]
+        print("Author_ID: ", author_value2)
+        # Inserts aID and bID into book_author table
+        book_author_insert = ("""INSERT INTO book_author (bID, aID) VALUES ('%s', '%s')"""
+                              % (book_value2, author_value2))
+        cursor.execute(book_author_insert)
+
+        # Checks to make sure book_author is in database
+        book_author_query = ("""SELECT DISTINCT bID, aID FROM book_author WHERE bID = '%s' AND aID = '%s'"""
+                             % (book_value2, author_value2))
+        # Executes query
+        cursor.execute(book_author_query)
+        # Stores query results into variable
+        book_author_value = cursor.fetchone()
+        print("Book_Author added", book_author_value)
+
+        # PUBLISHER NAME ---------------------------------------------------------------------------------------
+        # Query to check if publisher exists`
+        publisher_query = ("""SELECT pID FROM publisher WHERE publisher = %s""" % publisher)
+
+        # Checks if author exists
+        if publisher_query is True:
+            print("Publisher already exists", publisher_query)
+        else:
+            # Inserts publisher into database
+            publisher_insert = ("""INSERT INTO publisher (pID, publisher) VALUES ('%s', '%s');"""
+                                % (str(uuid4()), publisher))
+            cursor.execute(publisher_insert)
+            # Stores query results into variable
+            cursor.execute(publisher_query)
+            publisher_value = cursor.fetchone()
+            print("Publisher added", publisher_value)
+
+        # BOOK PUBLISHER -----------------------------------------------------------------------------------
+        publisher_value2 = publisher_value[0]
+        print("Publisher_ID: ", publisher_value2)
+
+        # Inserts bID and pID into book_publisher table
+        book_publisher_insert = ("""INSERT INTO book_publisher (bID, pID) VALUES ('%s', '%s')"""
+                                 % (book_value2, publisher_value2))
+        cursor.execute(book_publisher_insert)
+
+        # Checks to make sure book_publisher is in database
+        book_publisher_query = ("""SELECT DISTINCT bID, pID FROM book_publisher WHERE bID = '%s' AND pID = '%s'"""
+                                % (book_value2, publisher_value2))
+
+        # Executes query
+        cursor.execute(book_publisher_query)
+        # Stores query results into variable
+        book_publisher_value = cursor.fetchone()
+
+        print("Book_Publisher added", book_publisher_value)
+
+        # GENRE ------------------------------------------------------------------------------------------------
+        # Query to check if genre exists
+        genre_query = ("""SELECT gID FROM genres WHERE name = %s""" % genre)
+
+        # Checks if genre exists
+        if genre_query is True:
+            print("Genre already exists", genre_query)
+        else:
+            # Inserts genre into database
+            genres_insert = ("""INSERT INTO genres (gID, name) VALUES ('%s', '%s');"""
+                             % (str(uuid4()), genre))
+            cursor.execute(genres_insert)
+            # Stores query results into variable
+            cursor.execute(genre_query)
+            genre_value = cursor.fetchone()
+            print("Genre added", genre_value)
+
+        # BOOK GENRE -----------------------------------------------------------------------------------
+        genre_value2 = genre_value[0]
+        print("Genre_ID: ", genre_value2)
+
+        # Inserts bID and gID into book_genre table
+        book_genre_insert = ("""INSERT INTO book_genre (bID, gID) VALUES ('%s', '%s')""" % (book_value2, genre_value2))
+        cursor.execute(book_genre_insert)
+
+        # Checks to make sure book_genre is in database
+        book_genre_query = ("""SELECT DISTINCT bID, gID FROM book_genre WHERE bID = '%s' AND gID = '%s'"""
+                            % (book_value2, genre_value2))
+
+        # Executes query
+        cursor.execute(book_genre_query)
+        # Stores query results into variable
+        book_genre_value = cursor.fetchone()
+        print("Book_Genre added", book_genre_value)
+
+        # mydb.commit()
+        cursor.close()
+        mydb.close()
 
         """
         if not title:
