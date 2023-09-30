@@ -92,7 +92,7 @@ def get_data():
 
         # PUBLISHER NAME ---------------------------------------------------------------------------------------
         # Query to check if publisher exists`
-        publisher_query = ("""SELECT pID FROM publisher WHERE publisher = %s""" % publisher)
+        publisher_query = ("""SELECT pID FROM publisher WHERE publisher = '%s'""" % publisher)
 
         # Checks if author exists
         if publisher_query is True:
@@ -129,14 +129,14 @@ def get_data():
 
         # GENRE ------------------------------------------------------------------------------------------------
         # Query to check if genre exists
-        genre_query = ("""SELECT gID FROM genres WHERE name = %s""" % genre)
+        genre_query = ("""SELECT gID FROM genre WHERE genre = '%s'""" % genre)
 
         # Checks if genre exists
         if genre_query is True:
             print("Genre already exists", genre_query)
         else:
             # Inserts genre into database
-            genres_insert = ("""INSERT INTO genres (gID, name) VALUES ('%s', '%s');"""
+            genres_insert = ("""INSERT INTO genre (gID, genre) VALUES ('%s', '%s');"""
                              % (str(uuid4()), genre))
             cursor.execute(genres_insert)
             # Stores query results into variable
@@ -162,7 +162,7 @@ def get_data():
         book_genre_value = cursor.fetchone()
         print("Book_Genre added", book_genre_value)
 
-        # mydb.commit()
+        mydb.commit()
         cursor.close()
         mydb.close()
 
