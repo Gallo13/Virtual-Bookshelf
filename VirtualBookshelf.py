@@ -8,6 +8,7 @@
 from flask import Flask, render_template, flash, url_for, request
 import mysql.connector
 from uuid import uuid4
+from datetime import datetime
 
 app = Flask(__name__, template_folder='HTML', static_folder='')
 
@@ -30,9 +31,10 @@ def get_data():
         publisher = request.form['publisher']
         pages = request.form['pages']
         rating = request.form['rating']
+        date_added = datetime.now().date().strftime('%Y-%m-%d')
 
-        print("Title: ", title,  "Author: ", author_fname, author_lname, "Genre: ", genre, "Publisher: ", publisher,
-              "Pages: ", pages, "Rating: ", rating)
+        # print("Title: ", title,  "Author: ", author_fname, author_lname, "Genre: ", genre, "Publisher: ", publisher,
+        #      "Pages: ", pages, "Rating: ", rating, "Date Added: ", date_added)
 
         # try:
         #    with mydb.cursor() as cursor:
@@ -45,8 +47,9 @@ def get_data():
             print("Book already exists", title)
         else:
             # Inserts book into database
-            books_insert = ("""INSERT INTO books (bID, title, pages, rating) VALUES ('%s', '%s', %s, %s);"""
-                            % (str(uuid4()), title, int(pages), int(rating)))
+            books_insert = ("""INSERT INTO books (bID, title, pages, rating, date_added) 
+                           VALUES ('%s', '%s', %s, %s, '%s');"""
+                            % (str(uuid4()), title, int(pages), int(rating),  date_added))
             cursor.execute(books_insert)
             # Executes query
             cursor.execute(book_query)
