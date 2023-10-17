@@ -8,8 +8,8 @@ create table books
   (bID		 char(36) NOT NULL PRIMARY KEY,	 
    title	 varchar(225) NOT NULL,		
    pages	 smallint(5) NOT NULL, 
-   rating	 char(1)
-   seriesNum int(3));
+   rating	 char(1),
+   seriesNum 	 int(3));
 
 
 create table authors
@@ -54,7 +54,7 @@ create table series
 (
 	sID char(36) NOT NULL PRIMARY KEY,
     seriesName varchar(225) NOT NULL
-)
+);
 
 create table book_series
 (
@@ -62,4 +62,4 @@ create table book_series
     sID		char(36) NOT NULL,
     CONSTRAINT FOREIGN KEY (bID) REFERENCES books(bID),
     CONSTRAINT FOREIGN KEY (sID) REFERENCES series(sID)
-)
+);
