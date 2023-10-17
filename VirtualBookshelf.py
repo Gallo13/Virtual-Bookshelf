@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Created date: 09/01/2023
-# Last Modified: 09/25/2023
+# Last Modified: 10/16/2023
 # Description: Virtual Bookshelf Webapp/Storage
 # Python, Flask, MySQL, ML Recommender
 
