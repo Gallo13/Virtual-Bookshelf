@@ -10,6 +10,22 @@
 <script src="https://kit.fontawesome.com/efc02a65e2.js" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function seriesCollapse()
+    {
+      // Get the checkbox
+      var checkBox = document.getElementById("myCheck");
+      // Get the output text
+      var text = document.getElementById("seriesText");
+
+      // If the checkbox is checked, display the output text
+      if (checkBox.checked == true){
+        text.style.display = "block";
+      } else {
+        text.style.display = "none";
+      }
+    }
+</script>
 <style>
 * {
   box-sizing: border-box;
@@ -86,10 +102,10 @@ footer {
 
 .textbox
 {
-border: none;
-border-bottom: 2px solid #502B09;
-background-color: #1B201E;
-color: #C4BAA6;
+    border: none;
+    border-bottom: 2px solid #502B09;
+    background-color: #1B201E;
+    color: #C4BAA6;
 }
 
 /* Responsive layout - makes the menu and the content (inside the section) sit on top of each other instead of next to each other */
@@ -98,6 +114,20 @@ color: #C4BAA6;
     -webkit-flex-direction: column;
     flex-direction: column;
   }
+
+/* Remove Input Number Arrows for Chome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button
+{
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove Input Number Arrows for Firefox */
+input[type=number]
+{
+  -moz-appearance: textfield;
+}
 }
 </style>
 </head>
@@ -143,12 +173,6 @@ color: #C4BAA6;
             <input class="w3-input textbox" type="number" name="pages" id="pages" min="1" value=""><br>
         </div>
 
-        <!---
-        <div class="w3-half">
-            <label for="rating">Rating: (Scale of 1 - 5)</label>
-            <input class="w3-input textbox" type="number" id="rating" min="1" max="5" value=""><br><br>
-        </div>
-        -->
         <div class="w3-half" style="back-ground:#1B201E">
             <label for="rating">Rating:</label>
             <select class="w3-select" name="rating" id="rating" style="back-ground:#1B201E">
@@ -157,10 +181,29 @@ color: #C4BAA6;
               <option value="3">3 Stars</option>
               <option value="4">4 Stars</option>
               <option value="5">5 Stars</option>
-            </select>
+            </select><br><br><br>
+        </div>
+
+        <div>
+            <label> Part of a Series?   </label>
+            <input type="checkbox" name="checkbox" id="myCheck" onclick="seriesCollapse()">
+
+            <!--<p id="seriesText" style="display:none"> </p>-->
+            <div id="seriesText" style="display:none">
+                <br>
+                <div class="w3-half">
+                    <label for="series">Series Name:</label>
+                    <input class="w3-input textbox" type="text" name="series" id="series" value=""><br>
+                </div>
+                <div class="w3-half">
+                    <label for="seriesNum">Number in Series:</label>
+                    <input class="w3-input textbox" type="number" name="seriesNum" id="seriesNum" min="1" value=""><br>
+                </div>
+            </div>
         </div>
 
         <div class="w3-container">
+            <br><br><br>
             <input class="w3-btn w3-round-xxlarge w3-ripple" type="submit" value="Add" style="background-color:#502B09">
             <!-- onclick="alert('Your book was added!')"  -->
             <input class="w3-btn w3-round-xxlarge w3-ripple" type="reset" value="Clear" style="background-color:#502B09">
