@@ -9,6 +9,7 @@ create table books
    title	 varchar(225) NOT NULL,		
    pages	 smallint(5) NOT NULL, 
    rating	 char(1),
+   date_added	 date NOT NULL,
    seriesNum 	 int(3));
 
 
