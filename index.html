@@ -142,6 +142,52 @@ input[type=number]
     <div class="centeredTop" style="font-size:1vw">@Gallo13</div>
   </div>
 </header>
+
+<!-- Sticky Nav Bar------------------------------------------------------------>
+<nav class="navbar navbar-expand-sm sticky-top" style="background-color:#1B201E;">
+  <div class="container-fluid justify-content-right" style="background-color:#1B201E">
+    <input class="w3-btn w3-round-xxlarge w3-ripple" data-bs-toggle="modal" data-bs-target="#myModal" value="LOGIN" style="background-color:#502B09">
+  </div>
+</nav>
+
+<!-- MODAL FOR LOGIN ---------------------------------------------------------->
+<!-- The Modal -->
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content justify-content-center" style="font-family:'Cormorant Garamond', serif; background-color:#1B201E">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">LOGIN</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="form-outline form-white mb-4">
+            <input type="email" id="typeEmailX" class="form-control form-control-lg" />
+            <label class="form-label" for="typeEmailX">Email</label>
+        </div>
+          <div class="form-outline form-white mb-4">
+              <input type="password" id="typePasswordX" class="form-control form-control-lg" />
+              <label class="form-label" for="typePasswordX">Password</label>
+        </div>
+
+        <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p>
+
+        <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- Adding to Library -------------------------------------------------------->
 <div class="w3-display-container section w3-mobile w3-responsive">
   <div class="w3-container couch" style="padding-left:0px"><img class="w3-image" src="images/couch.jpg" style="width:100%; height:100%;"></div>
@@ -149,30 +195,37 @@ input[type=number]
   <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
     <p class='w3-padding-large' style="font-size:4.5vw;">Add a Book to the Library</p>
     <form class="w3-container was-validated" style="font-size:1vw;" method="POST">
+        <!-- TITLE -->
         <label for="title">Title:</label>
         <input class="w3-input textbox" type="text" name="title" id="title"><br>
 
+        <!-- AUTHOR FIRST NAME-->
         <div class="w3-half">
             <label for="author_fname">Author First Name:</label>
             <input class="w3-input textbox" type="text" name="author_fname" id="author_fname" value=""><br>
         </div>
 
+        <!-- AUTHOR LAST NAME-->
         <div class="w3-half">
             <label for="author_lname">Author Last Name:</label>
             <input class="w3-input textbox" type="text" name="author_lname" id="author_lname" value=""><br>
         </div>
 
+        <!-- GENRE -->
         <label for="genre">Genre:</label>
         <input class="w3-input textbox" type="text" name="genre" id="genre" value=""><br>
 
+        <!-- PUBLISHER -->
         <label for="publisher">Publisher:</label>
         <input class="w3-input textbox" type="text" name="publisher" id="publisher" value=""><br>
 
+        <!-- PAGES -->
         <div class="w3-half">
             <label for="pages">Pages:</label>
             <input class="w3-input textbox" type="number" name="pages" id="pages" min="1" value=""><br>
         </div>
 
+        <!-- RATING -->
         <div class="w3-half" style="back-ground:#1B201E">
             <label for="rating">Rating:</label>
             <select class="w3-select" name="rating" id="rating" style="back-ground:#1B201E">
@@ -184,17 +237,21 @@ input[type=number]
             </select><br><br><br>
         </div>
 
+        <!-- SERIES -->
         <div>
+            <!-- SERIES CHECKBOX -->
             <label> Part of a Series?   </label>
             <input type="checkbox" name="checkbox" id="myCheck" onclick="seriesCollapse()">
 
-            <!--<p id="seriesText" style="display:none"> </p>-->
+            <!-- SERIES DROPDOWN AFTER CHECKBOX -->
             <div id="seriesText" style="display:none">
                 <br>
                 <div class="w3-half">
+                    <!-- SERIES NAME -->
                     <label for="series">Series Name:</label>
                     <input class="w3-input textbox" type="text" name="series" id="series" value=""><br>
                 </div>
+                <!-- SERIES NUMBER -->
                 <div class="w3-half">
                     <label for="seriesNum">Number in Series:</label>
                     <input class="w3-input textbox" type="number" name="seriesNum" id="seriesNum" min="1" value=""><br>
@@ -202,15 +259,16 @@ input[type=number]
             </div>
         </div>
 
+        <!-- ADD AND CLEAR BUTTONS -->
         <div class="w3-container">
             <br><br><br>
             <input class="w3-btn w3-round-xxlarge w3-ripple" type="submit" value="Add" style="background-color:#502B09">
-            <!-- onclick="alert('Your book was added!')"  -->
             <input class="w3-btn w3-round-xxlarge w3-ripple" type="reset" value="Clear" style="background-color:#502B09">
         </div>
     </form>
   </div>
 </div>
+
 <!-- Analytics ---------------------------------------------------------------->
 <div class="w3-display-container w3-mobile w3-responsive">
   <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
@@ -238,19 +296,19 @@ input[type=number]
 <div class="w3-display-container section w3-mobile w3-responsive">
   <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
     <p class='w3-padding-large' style="font-size:4.5vw;">Purpose and Functionality</p>
-    <p class='w3-padding-large w3-center' style="font-size:2vw;">This Virtual Bookshelf serves as a way <br>
-      to store all the books I have read <br>
-      and own. The technologies used <br>
-      to make this website are Python, <br>
-      MySQL, and Flask. This website <br>
-      allows me to update my database.<br>
-      This project is scalable and I <br>
-      will add data analytics to query <br>
-      the data and learn more about <br>
-      my reading habits. In the future, <br>
-      future, I will also add a recommender <br>
-      system to find more books that would <br>
-      suit my taste.</p>
+    <p class='w3-padding-large w3-center' style="font-size:2vw;">
+        This Virtual Bookshelf serves as a way <br>
+        to store all the books I have read and <br>
+        own. The technologies used to make <br>
+        this website are Python, MySQL, and <br>
+        Flask. This website allows me to <br>
+        update my database. This project is <br>
+        scalable and I will add data analytics<br>
+        to query the data and learn more <br>
+        about my reading habits. In the <br>
+        future, I will also add a recommender<br>
+        system to find more books that<br>
+        would suit my taste.</p>
   </div>
    <div class="w3-container couch" style="padding-right:0px"><img class="w3-image" src="images/table.jpg" style="width:100%; height:100%;"></div>
 </div>
