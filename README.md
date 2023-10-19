@@ -13,9 +13,11 @@ FUTURE:
 ![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/adc58c88-7eba-4433-b920-b2f791323a6f)
 ![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/102c4dce-a026-49d6-b926-d5bc9e7a2d33)
 
-Next to be done: 
-(1) add date column to show when books are added
-(2) add books to database
-(3) throw error messages if nothing is in the input boxes
-(3) add chart.js charts to show query results/statistics on books
-(4) add recommender system
+Next to be done: <br>
+(1) Be able to have multiple authors <br>
+(2) Make Login and add login to database and put each book with login (bID, userID) <br>
+(3) add books to database <br>
+(4) tooltip to show how to input genre and author ("Please use commas to separate multiple genres") <br>
+(5) Add parallax to header image (?) <br>
+(6) add chart.js charts to show query results/statistics on books <br>
+(7) add recommender system<br>
