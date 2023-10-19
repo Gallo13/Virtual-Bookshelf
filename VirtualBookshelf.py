@@ -29,18 +29,27 @@ def get_data():
         author_fname = request.form['author_fname']
         author_lname = request.form['author_lname']
         genre = request.form['genre']
+        genre_split = None
         publisher = request.form['publisher']
         pages = request.form['pages']
         rating = request.form['rating']
         checkbox = request.form['checkbox']
+        date_added = datetime.now().date().strftime('%Y-%m-%d')
+
+        # Checks if there are multiple genres associated with the book
+        # Checks if there is a comma in the string
+        if ',' in genre:
+            # Separates string at comma and creates a string
+            genre_split = [x.strip() for x in genre.split(',')]
+        else:
+            pass
+
         if checkbox:
             series = request.form['series']
             series_num = request.form['seriesNum']
         else:
             series = None
             series_num = None
-
-        date_added = datetime.now().date().strftime('%Y-%m-%d')
 
         # print("Title: ", title,  "Author: ", author_fname, author_lname, "Genre: ", genre, "Publisher: ", publisher,
         #      "Pages: ", pages, "Rating: ", rating, "Date Added: ", date_added)
@@ -160,47 +169,95 @@ def get_data():
                 print("Book_Publisher added", book_publisher_value)
 
                 # GENRE ------------------------------------------------------------------------------------------------
-                # Query to check if genre exists
-                genre_query = ("""SELECT gID FROM genre WHERE genre = '%s'""" % genre)
-                cursor.execute(genre_query)
-                genre_query_value = cursor.fetchone()
-
-                # Checks if genre exists
-                if not genre_query_value:
-                    # Inserts genre into database
-                    genres_insert = ("""INSERT INTO genre (gID, genre) VALUES ('%s', '%s');"""
-                                     % (str(uuid4()), genre))
-                    cursor.execute(genres_insert)
-                    # Stores query results into variable
+                # Uses single genre
+                if not genre_split:
+                    # Query to check if genre exists
+                    genre_query = ("""SELECT gID FROM genre WHERE genre = '%s'""" % genre)
                     cursor.execute(genre_query)
-                    genre_insert_value = cursor.fetchone()
-                    print("Genre added", genre_insert_value)
+                    genre_query_value = cursor.fetchone()
+
+                    # Checks if genre exists
+                    if not genre_query_value:
+                        # Inserts genre into database
+                        genres_insert = ("""INSERT INTO genre (gID, genre) VALUES ('%s', '%s');"""
+                                         % (str(uuid4()), genre))
+                        cursor.execute(genres_insert)
+                        # Stores query results into variable
+                        cursor.execute(genre_query)
+                        genre_insert_value = cursor.fetchone()
+                        print("Genre added", genre_insert_value)
+                    else:
+                        print("Genre already exists", genre_query_value)
+
+                    # BOOK GENRE -----------------------------------------------------------------------------------
+                    # Uses genre_insert_value if genre_query_value is None
+                    if not genre_query_value:
+                        genre_value = genre_insert_value[0]
+                        print("Genre_ID: ", genre_value)
+                    # Uses genre_query_value if genre exists
+                    else:
+                        genre_value = genre_query_value[0]
+                        print("Genre_ID: ", genre_value)
+
+                    # Inserts bID and gID into book_genre table
+                    book_genre_insert = ("""INSERT INTO book_genre (bID, gID) VALUES ('%s', '%s')"""
+                                         % (book_value, genre_value))
+                    cursor.execute(book_genre_insert)
+
+                    # Checks to make sure book_genre is in database
+                    book_genre_query = ("""SELECT DISTINCT bID, gID FROM book_genre WHERE bID = '%s' AND gID = '%s'"""
+                                        % (book_value, genre_value))
+                    # Executes query
+                    cursor.execute(book_genre_query)
+                    # Stores query results into variable
+                    book_genre_value = cursor.fetchone()
+                    print("Book_Genre added", book_genre_value)
+
+                # Uses genre_split that is a list
                 else:
-                    print("Genre already exists", genre_query_value)
+                    for g in genre_split:
+                        # Query to check if genre exists
+                        genre_query = ("""SELECT gID FROM genre WHERE genre = '%s'""" % g)
+                        cursor.execute(genre_query)
+                        genre_query_value = cursor.fetchone()
 
-                # BOOK GENRE -----------------------------------------------------------------------------------
-                # Uses genre_insert_value if genre_query_value is None
-                if not genre_query_value:
-                    genre_value = genre_insert_value[0]
-                    print("Genre_ID: ", genre_value)
-                # Uses genre_query_value if genre exists
-                else:
-                    genre_value = genre_query_value[0]
-                    print("Genre_ID: ", genre_value)
+                        # Checks if genre exists
+                        if not genre_query_value:
+                            # Inserts genre into database
+                            genres_insert = ("""INSERT INTO genre (gID, genre) VALUES ('%s', '%s');"""
+                                             % (str(uuid4()), g))
+                            cursor.execute(genres_insert)
+                            # Stores query results into variable
+                            cursor.execute(genre_query)
+                            genre_insert_value = cursor.fetchone()
+                            print("Genre added", genre_insert_value)
+                        else:
+                            print("Genre already exists", genre_query_value)
 
-                # Inserts bID and gID into book_genre table
-                book_genre_insert = ("""INSERT INTO book_genre (bID, gID) VALUES ('%s', '%s')"""
-                                     % (book_value, genre_value))
-                cursor.execute(book_genre_insert)
+                        # BOOK GENRE -----------------------------------------------------------------------------------
+                        # Uses genre_insert_value if genre_query_value is None
+                        if not genre_query_value:
+                            genre_value = genre_insert_value[0]
+                            print("Genre_ID: ", genre_value)
+                        # Uses genre_query_value if genre exists
+                        else:
+                            genre_value = genre_query_value[0]
+                            print("Genre_ID: ", genre_value)
 
-                # Checks to make sure book_genre is in database
-                book_genre_query = ("""SELECT DISTINCT bID, gID FROM book_genre WHERE bID = '%s' AND gID = '%s'"""
+                        # Inserts bID and gID into book_genre table
+                        book_genre_insert = ("""INSERT INTO book_genre (bID, gID) VALUES ('%s', '%s')"""
+                                             % (book_value, genre_value))
+                        cursor.execute(book_genre_insert)
+
+                        # Checks to make sure book_genre is in database
+                        book_genre_query = (
+                                    """SELECT DISTINCT bID, gID FROM book_genre WHERE bID = '%s' AND gID = '%s'"""
                                     % (book_value, genre_value))
-                # Executes query
-                cursor.execute(book_genre_query)
-                # Stores query results into variable
-                book_genre_value = cursor.fetchone()
-                print("Book_Genre added", book_genre_value)
+                        # Executes query
+                        cursor.execute(book_genre_query)
+                        # Stores query results into variable
+                        book_genre_value = cursor.fetchone()
+                        print("Book_Genre added", book_genre_value)
 
                 # SERIES NAME ------------------------------------------------------------------------------------------
                 # Query to check if series exists
