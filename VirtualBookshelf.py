@@ -16,7 +16,7 @@ app = Flask(__name__, template_folder='HTML', static_folder='')
 mydb = mysql.connector.connect(
     host='localhost',
     user='root',
-    password='galloGiallo13',
+    password='###',
     database='bookshelf2'
 )
 
