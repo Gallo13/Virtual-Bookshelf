@@ -10,6 +10,7 @@ create table books
    pages	 smallint(5) NOT NULL, 
    rating	 char(1),
    date_added	 date NOT NULL,
+   date_publiahed	date NOT NULL,
    number_in_series 	 int(3));
 
 create table authors
