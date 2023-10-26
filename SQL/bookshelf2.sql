@@ -5,12 +5,13 @@ use bookshelf2;
 DROP TABLE IF EXISTS books, authors, book_author, publisher, book_publisher, book_courses, genre, book_genre;  /* cleanup old stuff */
 
 create table books
-  (bID		 char(36) NOT NULL PRIMARY KEY,	 
-   title	 varchar(225) NOT NULL,		
-   pages	 smallint(5) NOT NULL, 
-   rating	 char(1),
-   date_added	 date NOT NULL,
-   number_in_series 	 int(3));
+  (bID		 	char(36) NOT NULL PRIMARY KEY,	 
+   title	 	varchar(225) NOT NULL,		
+   pages	 	smallint(5) NOT NULL, 
+   rating	 	char(1),
+   date_added		date NOT NULL,
+   published_date	date NOT NULL,
+   number_in_series 	int(3));
 
 
 create table authors
@@ -53,13 +54,13 @@ create table book_genre
 
 create table series
 (
-	sID char(36) NOT NULL PRIMARY KEY,
+    sID char(36) NOT NULL PRIMARY KEY,
     seriesName varchar(225) NOT NULL
 );
 
 create table book_series
 (
-	bID		char(36) NOT NULL,
+    bID		char(36) NOT NULL,
     sID		char(36) NOT NULL,
     CONSTRAINT FOREIGN KEY (bID) REFERENCES books(bID),
     CONSTRAINT FOREIGN KEY (sID) REFERENCES series(sID)
