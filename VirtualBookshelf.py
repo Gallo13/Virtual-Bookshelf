@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Created date: 09/01/2023
-# Last Modified: 10/16/2023
+# Last Modified: 10/25/2023
 # Description: Virtual Bookshelf Webapp/Storage
 # Python, Flask, MySQL, ML Recommender
 
@@ -16,7 +16,7 @@ app = Flask(__name__, template_folder='HTML', static_folder='')
 mydb = mysql.connector.connect(
     host='localhost',
     user='root',
-    password='###',
+    password='galloGiallo13',
     database='bookshelf2'
 )
 
@@ -33,7 +33,7 @@ def get_data():
         publisher = request.form['publisher']
         pages = request.form['pages']
         rating = request.form['rating']
-        checkbox = request.form['checkbox']
+        checkbox = request.form.get('checkbox', False)
         date_added = datetime.now().date().strftime('%Y-%m-%d')
 
         # Checks if there are multiple genres associated with the book
@@ -51,29 +51,45 @@ def get_data():
             series = None
             series_num = None
 
-        # print("Title: ", title,  "Author: ", author_fname, author_lname, "Genre: ", genre, "Publisher: ", publisher,
-        #      "Pages: ", pages, "Rating: ", rating, "Date Added: ", date_added)
-
         cursor = mydb.cursor()
 
         try:
             # BOOK TITLE ------------------------------------------------------------------------------------------
             # SQL query to check if book exists
-            book_query = """SELECT bID FROM books WHERE title='%s' AND pages=%s;""" % (title, int(pages))
+            book_query = ("""SELECT bID FROM books WHERE title='%s' AND pages=%s;"""
+                          % (title, int(pages)))
             cursor.execute(book_query)
             book_query_value = cursor.fetchone()
+            if book_query_value:
+                print("Book already exists", title, book_query_value)
+            else:
+                pass
 
             if not book_query_value:
-                # Inserts book into database
-                books_insert = ("""INSERT INTO books (bID, title, pages, rating, date_added, seriesNum) 
-                                VALUES ('%s', '%s', %s, %s, '%s', %s);"""
-                                % (str(uuid4()), title, int(pages), int(rating), date_added, series_num))
-                cursor.execute(books_insert)
-                # Executes query
-                cursor.execute(book_query)
-                # Stores query results into variable
-                book_insert_value = cursor.fetchone()
-                print("Book added: ", title, book_insert_value)
+                # if series number doesn't exist
+                if not series_num:
+                    # Inserts book into database
+                    books_insert = ("""INSERT INTO books (bID, title, pages, rating, date_added) 
+                                     VALUES ('%s', '%s', %s, '%s', '%s');"""
+                                    % (str(uuid4()), title, int(pages), rating, date_added))
+                    cursor.execute(books_insert)
+                    # Executes query
+                    cursor.execute(book_query)
+                    # Stores query results into variable
+                    book_insert_value = cursor.fetchone()
+                    print("Book added: ", title, book_insert_value)
+                # if series number exists
+                else:
+                    # Inserts book into database
+                    books_insert = ("""INSERT INTO books (bID, title, pages, rating, number_in_series, date_added) 
+                                                         VALUES ('%s', '%s', %s, '%s', %s, '%s');"""
+                                    % (str(uuid4()), title, int(pages), rating, series_num, date_added))
+                    cursor.execute(books_insert)
+                    # Executes query
+                    cursor.execute(book_query)
+                    # Stores query results into variable
+                    book_insert_value = cursor.fetchone()
+                    print("Book added: ", title, book_insert_value)
 
                 # AUTHOR NAME ------------------------------------------------------------------------------------------
                 # Query to check if author exists
@@ -260,49 +276,52 @@ def get_data():
                         print("Book_Genre added", book_genre_value)
 
                 # SERIES NAME ------------------------------------------------------------------------------------------
-                # Query to check if series exists
-                series_query = ("""SELECT sID FROM series WHERE seriesName = '%s';""" % (series))
-                cursor.execute(series_query)
-                series_query_value = cursor.fetchone()
-                # Checks if series exists
-                if not series_query_value:
-                    # Inserts series into database
-                    series_insert = ("""INSERT INTO series (sID, seriesName) VALUES ('%s', '%s');"""
-                                     % (str(uuid4()), series))
-                    cursor.execute(series_insert)
-                    # Stores query results into variable
+                if not series:
+                    mydb.commit()
+                else:
+                    # Query to check if series exists
+                    series_query = ("""SELECT sID FROM series WHERE seriesName = '%s';""" % series)
                     cursor.execute(series_query)
-                    series_insert_value = cursor.fetchone()
-                    print("Series added: ", series, series_insert_value)
+                    series_query_value = cursor.fetchone()
+                    # Checks if series exists
+                    if not series_query_value:
+                        # Inserts series into database
+                        series_insert = ("""INSERT INTO series (sID, seriesName) VALUES ('%s', '%s');"""
+                                         % (str(uuid4()), series))
+                        cursor.execute(series_insert)
+                        # Stores query results into variable
+                        cursor.execute(series_query)
+                        series_insert_value = cursor.fetchone()
+                        print("Series added: ", series, series_insert_value)
 
-                else:
-                    print("Series already exists", series, series_query_value)
+                    else:
+                        print("Series already exists", series, series_query_value)
 
-                # BOOK SERIES -- -----------------------------------------------------------------------------------
-                # Uses series_insert_value if series_query_value is None
-                if not series_query_value:
-                    series_value = series_insert_value[0]
-                    print("Series_ID: ", series_value)
-                # Uses series_query_value if series exists
-                else:
-                    series_value = series_query_value[0]
-                    print("Series_ID: ", series_value)
+                    # BOOK SERIES -- -----------------------------------------------------------------------------------
+                    # Uses series_insert_value if series_query_value is None
+                    if not series_query_value:
+                        series_value = series_insert_value[0]
+                        print("Series_ID: ", series_value)
+                    # Uses series_query_value if series exists
+                    else:
+                        series_value = series_query_value[0]
+                        print("Series_ID: ", series_value)
 
-                # Inserts bID and sID into book_series table
-                book_series_insert = ("""INSERT INTO book_series (bID, sID) VALUES ('%s', '%s')"""
-                                      % (book_value, series_value))
-                cursor.execute(book_series_insert)
+                    # Inserts bID and sID into book_series table
+                    book_series_insert = ("""INSERT INTO book_series (bID, sID) VALUES ('%s', '%s')"""
+                                          % (book_value, series_value))
+                    cursor.execute(book_series_insert)
 
-                # Checks to make sure book_series is in database
-                book_series_query = ("""SELECT DISTINCT bID, sID FROM book_series WHERE bID = '%s' AND sID = '%s'"""
-                                     % (book_value, series_value))
-                # Executes query
-                cursor.execute(book_series_query)
-                # Stores query results into variable
-                book_series_value = cursor.fetchone()
-                print("Book_Series added", book_series_value)
+                    # Checks to make sure book_series is in database
+                    book_series_query = ("""SELECT DISTINCT bID, sID FROM book_series WHERE bID = '%s' AND sID = '%s'"""
+                                         % (book_value, series_value))
+                    # Executes query
+                    cursor.execute(book_series_query)
+                    # Stores query results into variable
+                    book_series_value = cursor.fetchone()
+                    print("Book_Series added", book_series_value)
 
-                mydb.commit()
+                    mydb.commit()
             else:
                 # flash('Book already exists!'
                 print("Book already exists", title, book_query_value)
@@ -316,7 +335,7 @@ def get_data():
             print("Message: ", err.msg)
             # raise Exception("Could not connect to database")
         finally:
-            print('Book added successfully!')
+            print('Done')
             cursor.close()
             mydb.close()
 
