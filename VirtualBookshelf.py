@@ -13,17 +13,17 @@ from datetime import datetime
 
 app = Flask(__name__, template_folder='HTML', static_folder='')
 
-mydb = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='galloGiallo13',
-    database='bookshelf2'
-)
-
 
 # route decorator to tell Flask what URL should trigger function
 @app.route('/', methods=['GET',  'POST'])
 def get_data():
+    mydb = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='galloGiallo13',
+        database='virtual_bookshelf'
+    )
+
     if request.method == 'POST':
         title = request.form['title']
         author_fname = request.form['author_fname']
@@ -35,6 +35,7 @@ def get_data():
         rating = request.form['rating']
         checkbox = request.form.get('checkbox', False)
         date_added = datetime.now().date().strftime('%Y-%m-%d')
+        date_published = request.form['date_published']
 
         # Checks if there are multiple genres associated with the book
         # Checks if there is a comma in the string
@@ -69,9 +70,9 @@ def get_data():
                 # if series number doesn't exist
                 if not series_num:
                     # Inserts book into database
-                    books_insert = ("""INSERT INTO books (bID, title, pages, rating, date_added) 
-                                     VALUES ('%s', '%s', %s, '%s', '%s');"""
-                                    % (str(uuid4()), title, int(pages), rating, date_added))
+                    books_insert = ("""INSERT INTO books (bID, title, pages, rating, date_added, date_published) 
+                                     VALUES ('%s', '%s', %s, '%s', '%s',  '%s');"""
+                                    % (str(uuid4()), title, int(pages), rating, date_added,  date_published))
                     cursor.execute(books_insert)
                     # Executes query
                     cursor.execute(book_query)
@@ -81,9 +82,10 @@ def get_data():
                 # if series number exists
                 else:
                     # Inserts book into database
-                    books_insert = ("""INSERT INTO books (bID, title, pages, rating, number_in_series, date_added) 
-                                                         VALUES ('%s', '%s', %s, '%s', %s, '%s');"""
-                                    % (str(uuid4()), title, int(pages), rating, series_num, date_added))
+                    books_insert = ("""INSERT INTO books 
+                                    (bID, title, pages, rating, number_in_series, date_added, date_published) 
+                                    VALUES ('%s', '%s', %s, '%s', %s, '%s',  '%s');"""
+                                    % (str(uuid4()), title, int(pages), rating, series_num, date_added, date_published))
                     cursor.execute(books_insert)
                     # Executes query
                     cursor.execute(book_query)
