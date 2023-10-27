@@ -219,23 +219,32 @@ input[type=number]
         <label for="publisher">Publisher:</label>
         <input class="w3-input textbox" type="text" name="publisher" id="publisher" value=""><br>
 
-        <!-- PAGES -->
-        <div class="w3-half">
-            <label for="pages">Pages:</label>
-            <input class="w3-input textbox" type="number" name="pages" id="pages" min="1" value=""><br>
-        </div>
+        <div class="w3-row">
+            <!-- PAGES -->
+            <div class="w3-col s4 w3-center">
+                <label for="pages">Pages:</label>
+                <input class="w3-input textbox" type="number" name="pages" id="pages" min="1" value=""><br>
+            </div>
 
-        <!-- RATING -->
-        <div class="w3-half" style="back-ground:#1B201E">
-            <label for="rating">Rating:</label>
-            <select class="w3-select" name="rating" id="rating" style="back-ground:#1B201E">
-              <option value="" selected>1 Star </option>
-              <option value="2">2 Stars</option>
-              <option value="3">3 Stars</option>
-              <option value="4">4 Stars</option>
-              <option value="5">5 Stars</option>
-            </select><br><br><br>
+            <!-- RATING -->
+            <div class="w3-col s4 w3-center" style="back-ground:#1B201E">
+                <label for="rating">Rating:</label>
+                <select class="w3-select" name="rating" id="rating" style="back-ground:#1B201E">
+                  <option value="" selected>1 Star </option>
+                  <option value="2">2 Stars</option>
+                  <option value="3">3 Stars</option>
+                  <option value="4">4 Stars</option>
+                  <option value="5">5 Stars</option>
+                </select><br><br><br>
+            </div>
+
+            <!-- DATE PUBLISHED -->
+            <div class="w3-col s4 w3-center">
+                <label for="date_published">Date Published:</label><br>
+                <input id="date_published" name="date_published" type="date">
+            </div>
         </div>
+        <br>
 
         <!-- SERIES -->
         <div>
@@ -321,6 +330,5 @@ input[type=number]
       <button class="w3-button w3-circle w3-ripple"><i class="fa-brands fa-github"></i></button>
   </a>
 </footer>
-
 </body>
 </html>
