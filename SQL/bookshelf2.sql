@@ -76,5 +76,5 @@ create table account_books
     aID		char(36) NOT NULL,
     bID		char(36) NOT NULL,
     CONSTRAINT FOREIGN KEY (bID) REFERENCES books(bID),
-    CONSTRAINT FOREIGN KEY (aID) REFERENCES account(aID)
+    CONSTRAINT FOREIGN KEY (aID) REFERENCES accounts(aID)
 );
