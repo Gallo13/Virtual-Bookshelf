@@ -1,38 +1,43 @@
-create database bookshelf2;
+create database virtual_bookshelf;
 
-use bookshelf2;
+use virtual_bookshelf;
 
-DROP TABLE IF EXISTS books, authors, book_author, publisher, book_publisher, genre, book_genre, series, book_series;  /* cleanup old stuff */
+DROP TABLE IF EXISTS books, authors, book_author, publisher, book_publisher, genre, book_genre, series, book_series, accounts, account_books;  /* cleanup old stuff */
 
 create table books
-  (bID		 char(36) NOT NULL PRIMARY KEY,	 
-   title	 varchar(225) NOT NULL,		
-   pages	 smallint(5) NOT NULL, 
-   rating	 char(1),
-   date_added	 date NOT NULL,
-   date_publiahed	date NOT NULL,
-   number_in_series 	 int(3));
+  (bID		 		char(36) NOT NULL PRIMARY KEY,	 
+   title	 		varchar(225) NOT NULL,		
+   pages	 		smallint(5) NOT NULL, 
+   rating	 		char(1),
+   date_added	 		date NOT NULL,
+   date_published 		date NOT NULL,
+   number_in_series 		int(3)
+   );
 
 create table authors
-  (aID	     	char(36) PRIMARY KEY,
-   firstname	varchar(20) NOT NULL,
-   lastname	varchar(20) NOT NULL);
+  (aID	     		char(36) PRIMARY KEY,
+   firstname		varchar(20) NOT NULL,
+   lastname		varchar(20) NOT NULL
+   );
 
 create table book_author
   (bID		char(36) NOT NULL,
    aID		char(36) NOT NULL,
    CONSTRAINT FOREIGN KEY (bID) REFERENCES books(bID),
-   CONSTRAINT FOREIGN KEY (aID) REFERENCES authors(aID));
+   CONSTRAINT FOREIGN KEY (aID) REFERENCES authors(aID)
+   );
 
 create table publisher
-  (pID		char(36) NOT NULL PRIMARY KEY,
-   publisher	varchar(64) NOT NULL);
+  (pID			char(36) NOT NULL PRIMARY KEY,
+   publisher		varchar(64) NOT NULL
+   );
 
 create table book_publisher
   (bID		char(36) NOT NULL,
    pID		char(36) NOT NULL,
    CONSTRAINT FOREIGN KEY (bID) REFERENCES books(bID),
-   CONSTRAINT FOREIGN KEY (pID) REFERENCES publisher(pID));
+   CONSTRAINT FOREIGN KEY (pID) REFERENCES publisher(pID)
+   );
 
 create table genre
   (gID		char(36)  NOT NULL PRIMARY KEY,
@@ -42,18 +47,34 @@ create table book_genre
   (bID		char(36) NOT NULL,
    gID		char(36) NOT NULL,
    CONSTRAINT FOREIGN KEY (bID) REFERENCES books(bID),
-   CONSTRAINT FOREIGN KEY (gID) REFERENCES genre(gID));
+   CONSTRAINT FOREIGN KEY (gID) REFERENCES genre(gID)
+   );
 
 create table series
 (
-	sID char(36) NOT NULL PRIMARY KEY,
+    sID char(36) NOT NULL PRIMARY KEY,
     seriesName varchar(225) NOT NULL
 );
 
 create table book_series
 (
-	bID		char(36) NOT NULL,
+    bID		char(36) NOT NULL,
     sID		char(36) NOT NULL,
     CONSTRAINT FOREIGN KEY (bID) REFERENCES books(bID),
     CONSTRAINT FOREIGN KEY (sID) REFERENCES series(sID)
+);
+
+create table accounts
+(
+    aID			char(36) NOT NULL PRIMARY KEY,
+    email		varchar(100) NOT NULL,
+    password	varchar(50) NOT NULL
+);
+
+create table account_books
+(
+    aID		char(36) NOT NULL,
+    bID		char(36) NOT NULL,
+    CONSTRAINT FOREIGN KEY (bID) REFERENCES books(bID),
+    CONSTRAINT FOREIGN KEY (aID) REFERENCES account(aID)
 );
