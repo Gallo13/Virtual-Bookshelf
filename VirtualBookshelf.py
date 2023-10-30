@@ -1,30 +1,167 @@
 # Created by: Jess Gallo
 # Created date: 09/01/2023
-# Last Modified: 10/25/2023
+# Last Modified: 10/30/2023
 # Description: Virtual Bookshelf Webapp/Storage
-# Python, Flask, MySQL, ML Recommender
+# Python, Flask, MySQL
+
+# CHANGE WHERE msg messages go! make into popup!
 
 # Libraries
-from flask import Flask, render_template, flash, url_for, request
-import mysql.connector
-from mysql.connector.errors import Error
-from uuid import uuid4
+import hashlib
+import re
 from datetime import datetime
+from uuid import uuid4
 
-app = Flask(__name__, template_folder='HTML', static_folder='')
+import mysql.connector
+from flask import Flask, render_template, flash, url_for, request, session
+from mysql.connector.errors import Error
+
+auth = Flask(__name__, template_folder='HTML', static_folder='')
+
+# Secret key for extra protection
+auth.secret_key = '85002040'
 
 
-# route decorator to tell Flask what URL should trigger function
-@app.route('/', methods=['GET',  'POST'])
-def get_data():
+@auth.route('/', methods=['GET', 'POST'])
+def home():
+    return render_template('index.html')
+# ======================================================================================================================
+
+
+@auth.route('/login', methods=['GET', 'POST'])
+def login():
+    # Outputs message if something goes wrong
+    # msg = ''
+
+    if request.method == 'POST':
+        # Connect to database
+        mydb = (mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='galloGiallo13',
+            database='virtual_bookshelf'
+        ))
+
+        # Stores email and password into variables
+        email = request.form['email']
+        password = request.form['password']
+        print(email, password)
+
+        # Retrieve the hashed password
+        hash_pw = password + auth.secret_key
+        hash_pw = hashlib.sha1(hash_pw.encode())
+        password = hash_pw.hexdigest()
+
+        # Check if account exists using MySQL
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mydb.cursor()
+        login_query = ("""SELECT * FROM accounts WHERE email = '%s' AND password = '%s';""" % (email, password))
+        cursor.execute(login_query)
+        # Fetch one record and return the result
+        login_query_value = cursor.fetchone()
+        print(login_query_value)
+
+        # If account does not exist in accounts table in the database
+        if not login_query_value:
+            # Account doesn't exist or email/password incorrect
+            msg = "Incorrect email/password"
+            print(msg)
+            return render_template('index.html', msg=msg)
+
+        # CREATE LOGIN HTML ===========================================================================================
+        # if account exists in accounts table in the database
+        else:
+            # Create session data, we can access this data in other routes
+            session['loggedin'] = True
+            session['email'] = email
+            session['aID'] = login_query_value[0]
+            # Redirect to home page
+            # return redirect(url_for('login'))
+            return render_template('login.html', msg='')
+
+    # return render_template('login.html', msg='')
+    # ==================================================================================================================
+
+
+@auth.route('/logout')
+def logout():
+    # Remove session data, this will log the user out
+    session.pop('loggedin', None)
+    session.pop('email', None)
+    session.pop('aID', None)
+    # Redirect to login page
+    # return redirect(url_for('index'))
+    return render_template('index.html', msg='')
+# ======================================================================================================================
+
+
+@auth.route('/register', methods=['GET', 'POST'])
+def register():
     mydb = mysql.connector.connect(
         host='localhost',
         user='root',
         password='galloGiallo13',
         database='virtual_bookshelf'
     )
-
+    # Outputs message if something goes wrong
+    # msg = ''
+    # Check if "email", "password" POST requirements exist (user submitted form)
     if request.method == 'POST':
+        # Create variables for easy access
+        email = request.form['email']
+        password = request.form['password']
+
+        print(email, password)
+
+        # Check if account exists using MySQL
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mydb.cursor()
+        account_query =("""SELECT * FROM accounts WHERE email = '%s'""" % email)
+        cursor.execute(account_query)
+        account_query_value = cursor.fetchone()
+
+        # If account exists show error and validation checks
+        if account_query_value:
+            msg = 'Account already exists!'
+        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            msg = 'Invalid email address!'
+        elif not email or not password:
+            msg = 'Please fill out the form!'
+        else:
+            # Hash the password
+            hash_pw = password + auth.secret_key
+            hash_pw = hashlib.sha1(hash_pw.encode())
+            password = hash_pw.hexdigest()
+            # Account doesn't exist, and the form data is valid, so insert the new account into the accounts table
+            account_insert = ("""INSERT INTO accounts VALUES ('%s', '%s', '%s')""" % (str(uuid4()), email, password))
+            cursor.execute(account_insert)
+            print("Account Added:, ", email, password)
+            mydb.commit()
+            cursor.close()
+            mydb.close()
+            msg = 'You have successfully registered!'
+            return render_template('index.html', msg=msg)
+
+    elif request.method == 'POST':
+        # Form is empty... (no POST data)
+        msg = 'Please fill out the form!'
+
+    # Show registration form with message (if any)
+    # return render_template('login.html', msg=msg)
+# ======================================================================================================================
+
+
+# route decorator to tell Flask what URL should trigger function
+@auth.route('/get_data', methods=['GET',  'POST'])
+def get_data():
+    mydb = (mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='galloGiallo13',
+        database='virtual_bookshelf'
+    ))
+
+    if request.method == 'POST' and session['loggedin'] is True:
         title = request.form['title']
         author_fname = request.form['author_fname']
         author_lname = request.form['author_lname']
@@ -61,11 +198,6 @@ def get_data():
                           % (title, int(pages)))
             cursor.execute(book_query)
             book_query_value = cursor.fetchone()
-            if book_query_value:
-                print("Book already exists", title, book_query_value)
-            else:
-                pass
-
             if not book_query_value:
                 # if series number doesn't exist
                 if not series_num:
@@ -79,6 +211,17 @@ def get_data():
                     # Stores query results into variable
                     book_insert_value = cursor.fetchone()
                     print("Book added: ", title, book_insert_value)
+
+                    # Takes book ID and stores it into book_value
+                    # Storing in new variables to change list/tuple to single string
+                    book_value = book_insert_value[0]
+                    print("Book_ID: ", book_value)
+
+                    # Inserts book into account_books table
+                    account_books_insert = ("""INSERT INTO account_books VALUES ('%s', '%s');"""
+                                            % (session['aID'], book_value))
+                    cursor.execute(account_books_insert)
+                    print("Book added to account: ", title, book_query_value)
                 # if series number exists
                 else:
                     # Inserts book into database
@@ -92,6 +235,12 @@ def get_data():
                     # Stores query results into variable
                     book_insert_value = cursor.fetchone()
                     print("Book added: ", title, book_insert_value)
+
+                    # Inserts book into account_books table
+                    account_books_insert = ("""INSERT INTO account_books VALUES ('%s', '%s');"""
+                                            % (session['aID'], book_value))
+                    cursor.execute(account_books_insert)
+                    print("Book added to account: ", title, book_query_value)
 
                 # AUTHOR NAME ------------------------------------------------------------------------------------------
                 # Query to check if author exists
@@ -114,7 +263,7 @@ def get_data():
                     print("Author already exists", author_fname, author_lname, author_query_value)
 
                 # BOOK AUTHOR---------------------------------------------------------------------------------------
-                # Takes book ID and stores it into book_value2
+                # Takes book ID and stores it into book_value
                 # Storing in new variables to change list/tuple to single string
                 book_value = book_insert_value[0]
                 print("Book_ID: ", book_value)
@@ -325,8 +474,26 @@ def get_data():
 
                     mydb.commit()
             else:
-                # flash('Book already exists!'
                 print("Book already exists", title, book_query_value)
+
+                # Checks if book exists in account books table to see if this account has the book associated with it
+                account_books_query = ("""SELECT * FROM account_books WHERE bID = '%s'""" % book_query_value)
+                cursor.execute(account_books_query)
+                account_books_query_value = cursor.fetchone()
+
+                if not account_books_query_value:
+                    # Inserts book into account_books table
+                    account_books_insert = ("""INSERT INTO account_books VALUES ('%s', '%s');"""
+                                            % (session['aID'], book_value))
+                    cursor.execute(account_books_insert)
+                    print("Book added to account: ", title, book_query_value)
+                    mydb.commit()
+                    cursor.close()
+                    mydb.close()
+                else:
+                    print('Book already associated with account!')
+                    mydb.close()
+                    cursor.close()
                 cursor.close()
                 # mydb.close()
         except mysql.connector.Error as err:
@@ -357,8 +524,8 @@ def get_data():
         else:
             flash('Book added successfully!')
         """
-    return render_template('index.html')
+    return render_template('login.html')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    auth.run(debug=True)
