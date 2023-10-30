@@ -146,11 +146,10 @@ input[type=number]
 <!-- Sticky Nav Bar------------------------------------------------------------>
 <nav class="navbar navbar-expand-sm sticky-top justify-content-right" style="background-color:#1B201E;">
     <!--<input class="w3-btn w3-round-xxlarge w3-ripple" data-bs-toggle="modal" data-bs-target="#myModal" value="LOGIN" style="background-color:#502B09">-->
-    <button class="btn btn-primary justify-content-right" type="button" style="background-color:#502B09" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
-    <button class="btn btn-primary justify-content-right" type="button" style="background-color:#502B09" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+    <button class="btn btn-primary justify-content-right" type="button" style="background-color:#502B09" data-bs-toggle="modal" data-bs-target="#loginModal">Logout</button>
 </nav>
 
-<!-- MODAL FOR LOGIN ---------------------------------------------------------->
+<!-- MODAL FOR LOGOUT ---------------------------------------------------------->
 <!-- The Modal -->
 <div class="modal fade" id="loginModal">
   <div class="modal-dialog modal-dialog-centered">
@@ -158,64 +157,14 @@ input[type=number]
 
       <!-- Modal Header -->
       <div class="modal-header justify-content-center">
-        <h4 class="modal-title">LOGIN</h4>
+        <h4 class="modal-title">LOGOUT</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
       <!-- Modal body -->
       <div class="modal-body">
-        <form action="/login" method="POST">
-            <div class="form-outline form-white mb-4">
-                <input type="email" id="email" name="email" class="form-control form-control-lg">
-                <label class="form-label" for="email">Email</label>
-            </div>
-            <div class="form-outline form-white mb-4">
-                <input type="password" id="password" name="password" class="form-control form-control-lg" />
-                <label class="form-label" for="password">Password</label>
-                <div class="msg">{{ msg }}</div>
-            </div>
-
-            <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p>
-
-            <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
-        </form>
-      </div>
-
-      <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- MODAL FOR REGISTER ---------------------------------------------------------->
-<!-- The Modal -->
-<div class="modal fade" id="registerModal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content justify-content-center" style="font-family:'Cormorant Garamond', serif; background-color:#1B201E">
-
-      <!-- Modal Header -->
-      <div class="modal-header justify-content-center">
-        <h4 class="modal-title">REGISTER</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <!-- Modal body -->
-      <div class="modal-body">
-        <form action="/register" method="POST">
-            <div class="form-outline form-white mb-4">
-                <input type="email" name="email" class="form-control form-control-lg">
-                <label class="form-label" for="email">Email</label>
-            </div>
-            <div class="form-outline form-white mb-4">
-                <input type="password" name="password" class="form-control form-control-lg">
-                <label class="form-label" for="password">Password</label>
-                <div class="msg">{{ msg }}</div>
-            </div>
-
-            <button class="btn btn-outline-light btn-lg px-5" type="submit">Register</button>
+        <form action="/logout">
+            <button class="btn btn-outline-light btn-lg px-5" type="submit">Logout</button>
         </form>
       </div>
 
