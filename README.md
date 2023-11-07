@@ -3,7 +3,7 @@ Virtual bookshelf Website using Python, Flask, HTML, and MySQL
 
 This virtual bookshelf uses HTML, CSS, WS-CSS, and Bootstrap on the front end to create and style the website. It also uses Python with Flask to make the backend and connects to MySQL with MySQL connector.
 
-It takes input such as Title, Author, Genre, Publisher, Pages, and personal Rating (on a scale of 1-5). That input gets appended to the MySQL database.
+It allows for registration with an email address and adds users to the database. If you are already registered, you are able to log in (and log out). The password is hashed for security. It takes input such as Title, Author, Genre, Publisher, Pages, personal Rating (on a scale of 1-5), and if it is a series, series name, and number in series. That input gets appended to the MySQL database. The books are then associated with an account. If a book exists within the database, it will not add another book, but add it to the account_books table. The database is compliant with 1NF, 2NF, 3NF and 4NF. 
 
 FUTURE:
 - It will show analytics on what kind of books I generally read, my average book length and my average book ratings, most read genre, and most read author.
