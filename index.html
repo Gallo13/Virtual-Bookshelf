@@ -135,19 +135,34 @@ input[type=number]
 <!-- HEADER ------------------------------------------------------------------>
 <header class="w3-display-container w3-mobile">
   <div class="headContainer">
-    <img class="w3-image" src='images/library.jpg' alt="Library" style="width:100%;">
+    <img class="w3-image" src='images/library-3267001.jpg' alt="Library" style="width:100%;">
     <div class="centered w3-animate-opacity">
-      <p style="font-size:10vw"> My Virtual Bookshelf</p>
+      <p style="font-size:8.5vw"> Create Your Virtual Bookshelf</p>
     </div>
     <div class="centeredTop" style="font-size:1vw">@Gallo13</div>
+      <!--
+    <div >
+        Image by
+        <a href="https://pixabay.com/users/noah_jurik-7130138/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=3267001">Noah Jurik</a>
+        from
+        <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=3267001">
+            Pixabay</a>
+    </div>
+    -->
   </div>
 </header>
 
 <!-- Sticky Nav Bar------------------------------------------------------------>
-<nav class="navbar navbar-expand-sm sticky-top justify-content-right" style="background-color:#1B201E;">
-    <!--<input class="w3-btn w3-round-xxlarge w3-ripple" data-bs-toggle="modal" data-bs-target="#myModal" value="LOGIN" style="background-color:#502B09">-->
-    <button class="btn btn-primary justify-content-right" type="button" style="background-color:#502B09" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
-    <button class="btn btn-primary justify-content-right" type="button" style="background-color:#502B09" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+<nav class="navbar navbar-expand-sm sticky-top" style="background-color:#101412; padding: 2px 10px 2px 10px;">
+    <div class="container-fluid" style="padding: 10px;">
+        <span class="navbar-text" style="color:#C4BAA6;">
+            {{ msg }}
+        </span>
+        <div class="justify-content-end">
+            <button class="btn btn-primary justify-content-end" type="button" style="background-color:#502B09; padding: 2px 10px 2px 10px;" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+            <button class="btn btn-primary justify-content-end" type="button" style="background-color:#502B09; padding: 2px 10px 2px 10px;" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+        </div>
+    </div>
 </nav>
 
 <!-- MODAL FOR LOGIN ---------------------------------------------------------->
@@ -172,10 +187,9 @@ input[type=number]
             <div class="form-outline form-white mb-4">
                 <input type="password" id="password" name="password" class="form-control form-control-lg" />
                 <label class="form-label" for="password">Password</label>
-                <div class="msg">{{ msg }}</div>
             </div>
 
-            <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p>
+            <p class="small mb-5 pb-lg-2"><a class="text-white-50">Forgot password? Please contact administrator</a></p>
 
             <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
         </form>
@@ -212,7 +226,6 @@ input[type=number]
             <div class="form-outline form-white mb-4">
                 <input type="password" name="password" class="form-control form-control-lg">
                 <label class="form-label" for="password">Password</label>
-                <div class="msg">{{ msg }}</div>
             </div>
 
             <button class="btn btn-outline-light btn-lg px-5" type="submit">Register</button>
@@ -229,12 +242,12 @@ input[type=number]
 </div>
 
 <!-- Adding to Library -------------------------------------------------------->
-<div class="w3-display-container section w3-mobile w3-responsive">
-  <div class="w3-container couch" style="padding-left:0px"><img class="w3-image" src="images/couch.jpg" style="width:100%; height:100%;"></div>
+<div class="w3-container section w3-mobile w3-responsive">
+  <div class="w3-container w3-cell couch w3-hide-small" style="padding-left:0px"><img class="w3-image" src="images/spiral-staircase-877834.jpg" style="width:100%; height:100%;"></div>
 
-  <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
-    <p class='w3-padding-large' style="font-size:4.5vw;">Add a Book to the Library</p>
-    <form class="w3-container was-validated" style="font-size:1vw;" method="POST" action="/get_data">
+  <div class="w3-container w3-cell adding w3-padding-32 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+    <p class='w3-padding-large' style="font-size:4.5vw;">Add a Book to Your Library</p>
+    <form class="w3-container was-validated" style="font-size:1.5vw;" method="POST" action="/get_data">
         <!-- TITLE -->
         <label for="title">Title:</label>
         <input class="w3-input textbox" type="text" name="title" id="title"><br>
@@ -280,7 +293,7 @@ input[type=number]
 
             <!-- DATE PUBLISHED -->
             <div class="w3-col s4 w3-center">
-                <label for="date_published">Date Published:</label><br>
+                <label for="date_published">Original Publish Date:</label><br>
                 <input id="date_published" name="date_published" type="date">
             </div>
         </div>
@@ -327,15 +340,21 @@ input[type=number]
       <div class="card-header">
         <nav>
           <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Home</button>
-            <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</button>
-            <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>
+            <button class="nav-link active" id="nav-rated-tab" data-bs-toggle="tab" data-bs-target="#nav-rated" type="button" role="tab" aria-controls="nav-rated" aria-selected="true">Top Rated</button>
+            <button class="nav-link" id="nav-authors-tab" data-bs-toggle="tab" data-bs-target="#nav-authors" type="button" role="tab" aria-controls="nav-authors" aria-selected="false">Top Authors</button>
+            <button class="nav-link" id="nav-genres-tab" data-bs-toggle="tab" data-bs-target="#nav-genres" type="button" role="tab" aria-controls="nav-genres" aria-selected="false">Top Genres</button>
+              <button class="nav-link" id="nav-series-tab" data-bs-toggle="tab" data-bs-target="#nav-series" type="button" role="tab" aria-controls="nav-series" aria-selected="false">Longest Series</button>
+            <button class="nav-link" id="nav-published-tab" data-bs-toggle="tab" data-bs-target="#nav-published" type="button" role="tab" aria-controls="nav-published" aria-selected="false">Oldest Published</button>
           </div>
         </nav>
         <div class="tab-content" id="nav-tabContent">
-          <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">Query 1</div>
-          <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">Query 2</div>
-          <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">Query 3</div>
+          <div class="tab-pane fade show active" id="nav-rated" role="tabpanel" aria-labelledby="nav-rated-tab">
+              Query 1
+          </div>
+          <div class="tab-pane fade" id="nav-authors" role="tabpanel" aria-labelledby="nav-authors-tab">Query 2</div>
+          <div class="tab-pane fade" id="nav-genres" role="tabpanel" aria-labelledby="nav-genres-tab">Query 3</div>
+          <div class="tab-pane fade" id="nav-series" role="tabpanel" aria-labelledby="nav-series-tab">Query 4</div>
+          <div class="tab-pane fade" id="nav-published" role="tabpanel" aria-labelledby="nav-published-tab">Query 5</div>
         </div>
       </div>
     </div>

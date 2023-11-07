@@ -10,6 +10,8 @@
 <script src="https://kit.fontawesome.com/efc02a65e2.js" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <script>
     function seriesCollapse()
     {
@@ -132,7 +134,7 @@ input[type=number]
 </style>
 </head>
 <body>
-<!-- HEADER ------------------------------------------------------------------>
+<!-- HEADER
 <header class="w3-display-container w3-mobile">
   <div class="headContainer">
     <img class="w3-image" src='images/library.jpg' alt="Library" style="width:100%;">
@@ -142,11 +144,20 @@ input[type=number]
     <div class="centeredTop" style="font-size:1vw">@Gallo13</div>
   </div>
 </header>
+------------------------------------------------------------------>
 
 <!-- Sticky Nav Bar------------------------------------------------------------>
-<nav class="navbar navbar-expand-sm sticky-top justify-content-right" style="background-color:#1B201E;">
+<nav class="navbar navbar-expand-sm sticky-top" style="background-color:#101412; padding: 2px 10px 2px 10px;">
     <!--<input class="w3-btn w3-round-xxlarge w3-ripple" data-bs-toggle="modal" data-bs-target="#myModal" value="LOGIN" style="background-color:#502B09">-->
-    <button class="btn btn-primary justify-content-right" type="button" style="background-color:#502B09" data-bs-toggle="modal" data-bs-target="#loginModal">Logout</button>
+    <div class="container-fluid">
+        <span class="navbar-text" style="color:#C4BAA6;">
+            {{ session['email']}}
+        </span>
+        {{ msg }}
+        <div class="justify-content-end">
+            <button class="btn btn-primary justify-content-end" type="button" style="background-color:#502B09;" data-bs-toggle="modal" data-bs-target="#loginModal">Logout</button>
+        </div>
+    </div>
 </nav>
 
 <!-- MODAL FOR LOGOUT ---------------------------------------------------------->
@@ -179,10 +190,10 @@ input[type=number]
 
 <!-- Adding to Library -------------------------------------------------------->
 <div class="w3-display-container section w3-mobile w3-responsive">
-  <div class="w3-container couch" style="padding-left:0px"><img class="w3-image" src="images/couch.jpg" style="width:100%; height:100%;"></div>
+  <div class="w3-container couch" style="padding-left:0px"><img class="w3-image" src="images/spiral-staircase-877834.jpg" style="width:100%; height:100%;"></div>
 
-  <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
-    <p class='w3-padding-large' style="font-size:4.5vw;">Add a Book to the Library</p>
+  <div class="w3-panel adding w3-padding-48 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+    <p class='w3-padding-large' style="font-size:4.5vw;">Add a Book to Your Library</p>
     <form class="w3-container was-validated" style="font-size:1vw;" method="POST" action="/get_data">
         <!-- TITLE -->
         <label for="title">Title:</label>
@@ -229,7 +240,7 @@ input[type=number]
 
             <!-- DATE PUBLISHED -->
             <div class="w3-col s4 w3-center">
-                <label for="date_published">Date Published:</label><br>
+                <label for="date_published">Original Publish Date:</label><br>
                 <input id="date_published" name="date_published" type="date">
             </div>
         </div>
@@ -269,22 +280,29 @@ input[type=number]
 
 <!-- Analytics ---------------------------------------------------------------->
 <div class="w3-display-container w3-mobile w3-responsive">
-  <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
-    <p class='w3-padding-large' style="font-size:4.5vw;">Analytics</p>
+  <img class="w3-image" src='images/pierre-bamin-6UwDRxbMfIk-unsplash.jpg' alt="Library" style="width:100%;">
+  <div class="w3-display-middle adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+      <p class='w3-padding-large' style="font-size:4.5vw;">Analytics</p>
     <!---------------------------------->
-     <div class="card text-center">
+     <div class="card text-center" style="background-color:#101412;">
       <div class="card-header">
         <nav>
           <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Home</button>
-            <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</button>
-            <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>
+            <button class="nav-link active" id="nav-rated-tab" data-bs-toggle="tab" data-bs-target="#nav-rated" type="button" role="tab" aria-controls="nav-rated" aria-selected="true">Top Rated</button>
+            <button class="nav-link" id="nav-authors-tab" data-bs-toggle="tab" data-bs-target="#nav-authors" type="button" role="tab" aria-controls="nav-authors" aria-selected="false">Top Authors</button>
+            <button class="nav-link" id="nav-genres-tab" data-bs-toggle="tab" data-bs-target="#nav-genres" type="button" role="tab" aria-controls="nav-genres" aria-selected="false">Top Genres</button>
+              <button class="nav-link" id="nav-series-tab" data-bs-toggle="tab" data-bs-target="#nav-series" type="button" role="tab" aria-controls="nav-series" aria-selected="false">Longest Series</button>
+            <button class="nav-link" id="nav-published-tab" data-bs-toggle="tab" data-bs-target="#nav-published" type="button" role="tab" aria-controls="nav-published" aria-selected="false">Oldest Published</button>
           </div>
         </nav>
         <div class="tab-content" id="nav-tabContent">
-          <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">Query 1</div>
-          <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">Query 2</div>
-          <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">Query 3</div>
+          <div class="tab-pane fade show active" id="nav-rated" role="tabpanel" aria-labelledby="nav-rated-tab">
+              Query 1
+          </div>
+          <div class="tab-pane fade" id="nav-authors" role="tabpanel" aria-labelledby="nav-authors-tab">Query 2</div>
+          <div class="tab-pane fade" id="nav-genres" role="tabpanel" aria-labelledby="nav-genres-tab">Query 3</div>
+          <div class="tab-pane fade" id="nav-series" role="tabpanel" aria-labelledby="nav-series-tab">Query 4</div>
+          <div class="tab-pane fade" id="nav-published" role="tabpanel" aria-labelledby="nav-published-tab">Query 5</div>
         </div>
       </div>
     </div>
