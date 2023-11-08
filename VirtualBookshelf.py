@@ -15,6 +15,7 @@ from uuid import uuid4
 import mysql.connector
 from flask import Flask, render_template, flash, url_for, request, session, jsonify
 from mysql.connector.errors import Error
+import pandas as pd
 
 auth = Flask(__name__, template_folder='HTML', static_folder='')
 
@@ -71,6 +72,55 @@ def login():
             session['email'] = email
             session['aID'] = login_query_value[0]
             # Redirect to home page
+            # return render_template('login.html')
+
+            # Top 5 Books
+            top_book_query = """SELECT title FROM books INNER JOIN account_books ON books.bID = account_books.bID 
+                                WHERE aID = '%s' ORDER BY rating DESC LIMIT 5""" % session['aID']
+            cursor.execute(top_book_query)
+            top_book_query_value = cursor.fetchone()
+            print(top_book_query_value)
+
+            """
+            # Most Read Author
+            top_author_query = ""SELECT firstName, lastName FROM author INNER JOIN books ON author.aID = books.aID 
+                                INNER JOIN account_books ON books.bID = account_books.bID
+                                WHERE aID = '%s' ORDER BY rating DESC LIMIT 5"" % session['aID']
+            cursor.execute(top_author_query)
+            top_author_query_value = cursor.fetchone()
+            print(top_author_query_value)
+            """
+
+            # Longest Series
+            longest_series_query = """SELECT * FROM series INNER JOIN books ON series.sID = books.sID
+                                    INNER JOIN account_books ON books.bID = account_books.bID
+                                    WHERE aID = '%s' ORDER BY seriesNum DESC LIMIT 5""" % session['aID']
+            cursor.execute(longest_series_query)
+            longest_series_query_value = cursor.fetchone()
+            print(longest_series_query_value)
+
+            # Oldest Published Book
+            oldest_published_query = """SELECT * FROM books INNER JOIN account_books ON books.bID = account_books.bID
+                                        WHERE aID = '%s' ORDER BY published DESC LIMIT 5""" % \
+                                     session['aID']
+            cursor.execute(oldest_published_query)
+            oldest_published_query_value = cursor.fetchone()
+            print(oldest_published_query_value)
+
+            # Count Each Genre
+            genre_count_query = """SELECT genre, COUNT(*) FROM genre INNER JOIN books ON genre.gID = books.bID
+                                    INNER JOIN account_books ON books.bID = account_books.bID
+                                    WHERE aID = '%s' GROUP BY genre'""" % session['aID']
+            cursor.execute(genre_count_query)
+            genre_count_query_value = cursor.fetchone()
+            print(genre_count_query_value)
+
+            # Count of all books under account
+            books_count_query = """SELECT COUNT(*) FROM account_books WHERE aID = '%s'""" % session['aID']
+            cursor.execute(books_count_query)
+            books_count_query_value = cursor.fetchone()
+            print(books_count_query_value)
+
             return render_template('login.html')
 
     # ==================================================================================================================
@@ -83,7 +133,7 @@ def logout():
     session.pop('email', None)
     session.pop('aID', None)
     session['loggedin'] = False
-    msg='You have successfully logged out'
+    msg = 'You have successfully logged out'
     return render_template('index.html', msg=msg)
 # ======================================================================================================================
 
@@ -104,7 +154,7 @@ def register():
 
         # Check if account exists using MySQL
         cursor = mydb.cursor()
-        account_query =("""SELECT * FROM accounts WHERE email = '%s'""" % email)
+        account_query = ("""SELECT * FROM accounts WHERE email = '%s'""" % email)
         cursor.execute(account_query)
         account_query_value = cursor.fetchone()
 
@@ -170,7 +220,9 @@ def get_data():
         return render_template('index.html', msg=msg)
     elif request.method == 'POST' and session['loggedin'] is True:
         # Checks if form is filled out
-        if title not in request.form or author_fname not in request.form or author_lname not in request.form or genre not in request.form or publisher not in request.form or pages not in request.form or rating not in request.form or date_published not in request.form:
+        if (title not in request.form or author_fname not in request.form or author_lname not in request.form or
+                genre not in request.form or publisher not in request.form or pages not in request.form or
+                rating not in request.form or date_published not in request.form):
             msg = 'Please fill out the form!'
             return render_template('login.html', msg=msg)
         else:
@@ -228,7 +280,8 @@ def get_data():
                         books_insert = ("""INSERT INTO books 
                                         (bID, title, pages, rating, number_in_series, date_added, date_published) 
                                         VALUES ('%s', '%s', %s, '%s', %s, '%s',  '%s');"""
-                                        % (str(uuid4()), title, int(pages), rating, series_num, date_added, date_published))
+                                        % (str(uuid4()), title, int(pages), rating,
+                                           series_num, date_added, date_published))
                         cursor.execute(books_insert)
                         # Executes query
                         cursor.execute(book_query)
@@ -246,7 +299,7 @@ def get_data():
                         cursor.execute(account_books_insert)
                         print("Book added to account: ", title, book_query_value)
 
-                    # AUTHOR NAME ------------------------------------------------------------------------------------------
+                    # AUTHOR NAME --------------------------------------------------------------------------------------
                     # Query to check if author exists
                     author_query = ("""SELECT aID FROM authors WHERE firstname = '%s' AND lastname = '%s';"""
                                     % (author_fname, author_lname))
@@ -255,7 +308,8 @@ def get_data():
                     # Checks if author exists
                     if not author_query_value:
                         # Inserts author into database
-                        authors_insert = ("""INSERT INTO authors (aID, firstname, lastname) VALUES ('%s', '%s', '%s');"""
+                        authors_insert = ("""INSERT INTO authors (aID, firstname, lastname) 
+                                            VALUES ('%s', '%s', '%s');"""
                                           % (str(uuid4()), author_fname, author_lname))
                         cursor.execute(authors_insert)
                         # Stores query results into variable
@@ -295,7 +349,7 @@ def get_data():
                     book_author_value = cursor.fetchone()
                     print("Book_Author added", book_author_value)
 
-                    # PUBLISHER NAME ---------------------------------------------------------------------------------------
+                    # PUBLISHER NAME -----------------------------------------------------------------------------------
                     # Query to check if publisher exists`
                     publisher_query = ("""SELECT pID FROM publisher WHERE publisher = '%s'""" % publisher)
                     cursor.execute(publisher_query)
@@ -339,7 +393,7 @@ def get_data():
                     book_publisher_value = cursor.fetchone()
                     print("Book_Publisher added", book_publisher_value)
 
-                    # GENRE ------------------------------------------------------------------------------------------------
+                    # GENRE --------------------------------------------------------------------------------------------
                     # Uses single genre
                     if not genre_split:
                         # Query to check if genre exists
@@ -376,7 +430,8 @@ def get_data():
                         cursor.execute(book_genre_insert)
 
                         # Checks to make sure book_genre is in database
-                        book_genre_query = ("""SELECT DISTINCT bID, gID FROM book_genre WHERE bID = '%s' AND gID = '%s'"""
+                        book_genre_query = ("""SELECT DISTINCT bID, gID FROM book_genre 
+                                                WHERE bID = '%s' AND gID = '%s'"""
                                             % (book_value, genre_value))
                         # Executes query
                         cursor.execute(book_genre_query)
@@ -405,7 +460,7 @@ def get_data():
                             else:
                                 print("Genre already exists", genre_query_value)
 
-                            # BOOK GENRE -----------------------------------------------------------------------------------
+                            # BOOK GENRE -------------------------------------------------------------------------------
                             # Uses genre_insert_value if genre_query_value is None
                             if not genre_query_value:
                                 genre_value = genre_insert_value[0]
@@ -430,7 +485,7 @@ def get_data():
                             book_genre_value = cursor.fetchone()
                             print("Book_Genre added", book_genre_value)
 
-                    # SERIES NAME ------------------------------------------------------------------------------------------
+                    # SERIES NAME --------------------------------------------------------------------------------------
                     if not series:
                         mydb.commit()
                     else:
@@ -452,7 +507,7 @@ def get_data():
                         else:
                             print("Series already exists", series, series_query_value)
 
-                        # BOOK SERIES -- -----------------------------------------------------------------------------------
+                        # BOOK SERIES -- -------------------------------------------------------------------------------
                         # Uses series_insert_value if series_query_value is None
                         if not series_query_value:
                             series_value = series_insert_value[0]
@@ -468,7 +523,8 @@ def get_data():
                         cursor.execute(book_series_insert)
 
                         # Checks to make sure book_series is in database
-                        book_series_query = ("""SELECT DISTINCT bID, sID FROM book_series WHERE bID = '%s' AND sID = '%s'"""
+                        book_series_query = ("""SELECT DISTINCT bID, sID FROM book_series 
+                                                WHERE bID = '%s' AND sID = '%s'"""
                                              % (book_value, series_value))
                         # Executes query
                         cursor.execute(book_series_query)
@@ -480,7 +536,7 @@ def get_data():
                 else:
                     print("Book already exists", title, book_query_value)
 
-                    # Checks if book exists in account books table to see if this account has the book associated with it
+                    # Checks if book exists in account books table to see if the account has the book associated with it
                     account_books_query = ("""SELECT * FROM account_books WHERE bID = '%s'""" % book_query_value)
                     cursor.execute(account_books_query)
                     account_books_query_value = cursor.fetchone()
@@ -513,7 +569,8 @@ def get_data():
 
 @auth.route('/query')
 def query():
-    return render_template('query.html')
+    pass
+    # return render_template('query.html')
 
 
 if __name__ == '__main__':
