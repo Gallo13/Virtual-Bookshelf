@@ -20,7 +20,7 @@ import pandas as pd
 auth = Flask(__name__, template_folder='HTML', static_folder='')
 
 # Secret key for extra protection
-auth.secret_key = '85002040'
+auth.secret_key = '######'
 
 
 @auth.route('/', methods=['GET', 'POST'])
@@ -37,7 +37,7 @@ def login():
         mydb = (mysql.connector.connect(
             host='localhost',
             user='root',
-            password='galloGiallo13',
+            password='######',
             database='virtual_bookshelf'
         ))
 
@@ -149,7 +149,7 @@ def register():
     mydb = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='galloGiallo13',
+        password='######',
         database='virtual_bookshelf'
     )
     # Check if "email", "password" POST requirements exist (user submitted form)
