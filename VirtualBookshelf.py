@@ -70,56 +70,62 @@ def login():
             # Create session data, we can access this data in other routes
             session['loggedin'] = True
             session['email'] = email
-            session['aID'] = login_query_value[0]
+            session['uID'] = login_query_value[0]
             # Redirect to home page
             # return render_template('login.html')
 
             # Top 5 Books
             top_book_query = """SELECT title FROM books INNER JOIN account_books ON books.bID = account_books.bID 
-                                WHERE aID = '%s' ORDER BY rating DESC LIMIT 5""" % session['aID']
+                                WHERE uID = '%s' ORDER BY rating DESC LIMIT 5""" % session['uID']
             cursor.execute(top_book_query)
             top_book_query_value = cursor.fetchone()
             print(top_book_query_value)
+            # top_book_query_value.to_csv('top_book_query_value.csv')
 
-            """
             # Most Read Author
-            top_author_query = ""SELECT firstName, lastName FROM author INNER JOIN books ON author.aID = books.aID 
-                                INNER JOIN account_books ON books.bID = account_books.bID
-                                WHERE aID = '%s' ORDER BY rating DESC LIMIT 5"" % session['aID']
+            top_author_query = """ SELECT firstname, lastname, COUNT(lastname) as count
+                                    FROM authors
+                                    INNER JOIN book_author ON authors.aID = book_author.aID
+                                    INNER JOIN account_books ON book_author.bID = account_books.bID
+                                    WHERE account_books.uID = '%s'
+                                    GROUP BY firstname, lastname
+                                    ORDER BY count DESC
+                                    LIMIT 5;""" % session['uID']
             cursor.execute(top_author_query)
-            top_author_query_value = cursor.fetchone()
+            top_author_query_value = cursor.fetchall()
             print(top_author_query_value)
-            """
 
+            """
             # Longest Series
-            longest_series_query = """SELECT * FROM series INNER JOIN books ON series.sID = books.sID
+            longest_series_query = ""SELECT series FROM series INNER JOIN books ON series.sID = books.sID
                                     INNER JOIN account_books ON books.bID = account_books.bID
-                                    WHERE aID = '%s' ORDER BY seriesNum DESC LIMIT 5""" % session['aID']
+                                    WHERE uID = '%s' ORDER BY seriesNum DESC LIMIT 5"" % session['uID']
             cursor.execute(longest_series_query)
             longest_series_query_value = cursor.fetchone()
             print(longest_series_query_value)
 
             # Oldest Published Book
-            oldest_published_query = """SELECT * FROM books INNER JOIN account_books ON books.bID = account_books.bID
-                                        WHERE aID = '%s' ORDER BY published DESC LIMIT 5""" % \
-                                     session['aID']
+            oldest_published_query = ""SELECT * FROM books INNER JOIN account_books ON books.bID = account_books.bID
+                                        WHERE uID = '%s' ORDER BY published DESC LIMIT 5"" % \
+                                     session['uID']
             cursor.execute(oldest_published_query)
             oldest_published_query_value = cursor.fetchone()
             print(oldest_published_query_value)
 
             # Count Each Genre
-            genre_count_query = """SELECT genre, COUNT(*) FROM genre INNER JOIN books ON genre.gID = books.bID
+            genre_count_query = ""SELECT genre, COUNT(*) FROM genre INNER JOIN books ON genre.gID = books.bID
                                     INNER JOIN account_books ON books.bID = account_books.bID
-                                    WHERE aID = '%s' GROUP BY genre'""" % session['aID']
+                                    WHERE uID = '%s' GROUP BY genre'"" % session['uID']
             cursor.execute(genre_count_query)
             genre_count_query_value = cursor.fetchone()
             print(genre_count_query_value)
 
             # Count of all books under account
-            books_count_query = """SELECT COUNT(*) FROM account_books WHERE aID = '%s'""" % session['aID']
+            books_count_query = ""SELECT COUNT(*) FROM account_books WHERE uID = '%s'"" % session['uID']
             cursor.execute(books_count_query)
             books_count_query_value = cursor.fetchone()
             print(books_count_query_value)
+            """
 
             return render_template('login.html')
 
@@ -131,7 +137,7 @@ def logout():
     # Remove session data, this will log the user out
     session.pop('loggedin', None)
     session.pop('email', None)
-    session.pop('aID', None)
+    session.pop('uID', None)
     session['loggedin'] = False
     msg = 'You have successfully logged out'
     return render_template('index.html', msg=msg)
@@ -271,7 +277,7 @@ def get_data():
 
                         # Inserts book into account_books table
                         account_books_insert = ("""INSERT INTO account_books VALUES ('%s', '%s');"""
-                                                % (session['aID'], book_value))
+                                                % (session['uID'], book_value))
                         cursor.execute(account_books_insert)
                         print("Book added to account: ", title, book_query_value)
                     # if series number exists
@@ -295,7 +301,7 @@ def get_data():
 
                         # Inserts book into account_books table
                         account_books_insert = ("""INSERT INTO account_books VALUES ('%s', '%s');"""
-                                                % (session['aID'], book_value))
+                                                % (session['uID'], book_value))
                         cursor.execute(account_books_insert)
                         print("Book added to account: ", title, book_query_value)
 
@@ -544,7 +550,7 @@ def get_data():
                     if not account_books_query_value:
                         # Inserts book into account_books table
                         account_books_insert = ("""INSERT INTO account_books VALUES ('%s', '%s');"""
-                                                % (session['aID'], book_value))
+                                                % (session['uID'], book_value))
                         cursor.execute(account_books_insert)
                         print("Book added to account: ", title, book_query_value)
                         mydb.commit()
