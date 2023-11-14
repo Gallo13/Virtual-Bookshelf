@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Created date: 09/01/2023
-# Last Modified: 11/04/2023
+# Last Modified: 11/11/2023
 # Description: Virtual Bookshelf Webapp/Storage
 # Python, Flask, MySQL
 
@@ -11,6 +11,7 @@ import hashlib
 import re
 from datetime import datetime
 from uuid import uuid4
+import json
 
 import mysql.connector
 from flask import Flask, render_template, flash, url_for, request, session, jsonify
@@ -19,8 +20,39 @@ import pandas as pd
 
 auth = Flask(__name__, template_folder='HTML', static_folder='')
 
+
+def top_rated_book():
+    # Connect to database
+    mydb = (mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='galloGiallo13',
+        database='virtual_bookshelf'
+    ))
+    cursor = mydb.cursor()
+    # Top 5 Books
+    top_book_query = """SELECT title 
+                        FROM books 
+                        INNER JOIN account_books ON books.bID = account_books.bID 
+                        WHERE uID = '%s' 
+                        ORDER BY rating DESC LIMIT 5;""" % session['uID']
+    cursor.execute(top_book_query)
+    top_book_query_value = cursor.fetchall()
+    """
+    top_books_json = []
+    for book in top_book_query_value:
+        top_books_json.append(book[0])
+    print(top_book_query_value)
+    """
+    print(f"json: {json.dumps(top_book_query_value)}")
+    return json.dumps(top_book_query_value)
+
+
 # Secret key for extra protection
-auth.secret_key = '######'
+auth.secret_key = '85002040'
+
+# Add the function by name to the jinja environment.
+auth.jinja_env.globals.update(top_rated_book=top_rated_book)
 
 
 @auth.route('/', methods=['GET', 'POST'])
@@ -37,7 +69,7 @@ def login():
         mydb = (mysql.connector.connect(
             host='localhost',
             user='root',
-            password='######',
+            password='galloGiallo13',
             database='virtual_bookshelf'
         ))
 
@@ -52,7 +84,7 @@ def login():
 
         # Check if account exists using MySQL
         cursor = mydb.cursor()
-        login_query = ("""SELECT * FROM accounts WHERE email = '%s' AND password = '%s';""" % (email, password))
+        login_query = ("""SELECT uID FROM accounts WHERE email = '%s' AND password = '%s';""" % (email, password))
         cursor.execute(login_query)
         # Fetch one record and return the result
         login_query_value = cursor.fetchone()
@@ -74,15 +106,10 @@ def login():
             # Redirect to home page
             # return render_template('login.html')
 
-            # Top 5 Books
-            top_book_query = """SELECT title FROM books INNER JOIN account_books ON books.bID = account_books.bID 
-                                WHERE uID = '%s' ORDER BY rating DESC LIMIT 5""" % session['uID']
-            cursor.execute(top_book_query)
-            top_book_query_value = cursor.fetchone()
-            print(top_book_query_value)
+            # print(f"json: {jsonify(top_book_query_value)}")
             # top_book_query_value.to_csv('top_book_query_value.csv')
 
-            # Most Read Author
+            # Most Read Author - barplot
             top_author_query = """ SELECT firstname, lastname, COUNT(lastname) as count
                                     FROM authors
                                     INNER JOIN book_author ON authors.aID = book_author.aID
@@ -95,6 +122,16 @@ def login():
             top_author_query_value = cursor.fetchall()
             print(top_author_query_value)
 
+            # Oldest Published Book
+            oldest_published_query = """SELECT title, date_published
+                                                    FROM books 
+                                                    INNER JOIN account_books ON books.bID = account_books.bID 
+                                                    WHERE uID = '%s' 
+                                                    ORDER BY date_published ASC LIMIT 5""" % session['uID']
+            cursor.execute(oldest_published_query)
+            oldest_published_query_value = cursor.fetchall()
+            print(oldest_published_query_value)
+
             """
             # Longest Series
             longest_series_query = ""SELECT series FROM series INNER JOIN books ON series.sID = books.sID
@@ -103,14 +140,6 @@ def login():
             cursor.execute(longest_series_query)
             longest_series_query_value = cursor.fetchone()
             print(longest_series_query_value)
-
-            # Oldest Published Book
-            oldest_published_query = ""SELECT * FROM books INNER JOIN account_books ON books.bID = account_books.bID
-                                        WHERE uID = '%s' ORDER BY published DESC LIMIT 5"" % \
-                                     session['uID']
-            cursor.execute(oldest_published_query)
-            oldest_published_query_value = cursor.fetchone()
-            print(oldest_published_query_value)
 
             # Count Each Genre
             genre_count_query = ""SELECT genre, COUNT(*) FROM genre INNER JOIN books ON genre.gID = books.bID
@@ -149,7 +178,7 @@ def register():
     mydb = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='######',
+        password='galloGiallo13',
         database='virtual_bookshelf'
     )
     # Check if "email", "password" POST requirements exist (user submitted form)
@@ -571,12 +600,6 @@ def get_data():
                 cursor.close()
                 mydb.close()
                 # return render_template('login.html')
-
-
-@auth.route('/query')
-def query():
-    pass
-    # return render_template('query.html')
 
 
 if __name__ == '__main__':
