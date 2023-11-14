@@ -1,10 +1,10 @@
 # Created by: Jess Gallo
 # Created date: 09/01/2023
-# Last Modified: 11/11/2023
+# Last Modified: 11/13/2023
 # Description: Virtual Bookshelf Webapp/Storage
 # Python, Flask, MySQL
 
-# CHANGE WHERE msg messages go! make into popup!
+# TODO: Only connect to database ONCE
 
 # Libraries
 import hashlib
@@ -26,7 +26,7 @@ def top_rated_book():
     mydb = (mysql.connector.connect(
         host='localhost',
         user='root',
-        password='galloGiallo13',
+        password='####',
         database='virtual_bookshelf'
     ))
     cursor = mydb.cursor()
@@ -49,7 +49,7 @@ def top_rated_book():
 
 
 # Secret key for extra protection
-auth.secret_key = '85002040'
+auth.secret_key = '####'
 
 # Add the function by name to the jinja environment.
 auth.jinja_env.globals.update(top_rated_book=top_rated_book)
@@ -69,7 +69,7 @@ def login():
         mydb = (mysql.connector.connect(
             host='localhost',
             user='root',
-            password='galloGiallo13',
+            password='####',
             database='virtual_bookshelf'
         ))
 
@@ -178,7 +178,7 @@ def register():
     mydb = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='galloGiallo13',
+        password='####',
         database='virtual_bookshelf'
     )
     # Check if "email", "password" POST requirements exist (user submitted form)
