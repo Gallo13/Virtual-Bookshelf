@@ -1,55 +1,66 @@
 # Created by: Jess Gallo
 # Created date: 09/01/2023
-# Last Modified: 11/13/2023
+# Last Modified: 11/16/2023
 # Description: Virtual Bookshelf Webapp/Storage
 # Python, Flask, MySQL
 
-# TODO: Only connect to database ONCE
+# CHANGE WHERE msg messages go! make into popup!
 
 # Libraries
 import hashlib
 import re
 from datetime import datetime
 from uuid import uuid4
-import json
 
 import mysql.connector
 from flask import Flask, render_template, flash, url_for, request, session, jsonify
 from mysql.connector.errors import Error
 import pandas as pd
+# from chart_studio.plotly import plot, iplot
+# from chart_studio.grid_objs import GridDat
 
 auth = Flask(__name__, template_folder='HTML', static_folder='')
 
 
+# Connect to database
+mydb = (mysql.connector.connect(
+    host='localhost',
+    user='root',
+    password='galloGiallo13',
+    database='virtual_bookshelf'
+))
+
+
 def top_rated_book():
-    # Connect to database
-    mydb = (mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='####',
-        database='virtual_bookshelf'
-    ))
     cursor = mydb.cursor()
     # Top 5 Books
-    top_book_query = """SELECT title 
-                        FROM books 
-                        INNER JOIN account_books ON books.bID = account_books.bID 
+    top_book_query = """SELECT b.title, a.firstname, a.lastname, b.rating
+                        FROM books as b
+                        JOIN account_books as ab ON b.bID = ab.bID 
+                        JOIN book_author as ba ON b.bID = ba.bID
+                        JOIN authors as a ON ba.aID = a.aID
                         WHERE uID = '%s' 
                         ORDER BY rating DESC LIMIT 5;""" % session['uID']
     cursor.execute(top_book_query)
     top_book_query_value = cursor.fetchall()
     """
+    # json
     top_books_json = []
     for book in top_book_query_value:
         top_books_json.append(book[0])
     print(top_book_query_value)
-    """
     print(f"json: {json.dumps(top_book_query_value)}")
     return json.dumps(top_book_query_value)
+    """
+    print(str(top_book_query_value)[0:300])
+
+    df = pd.DataFrame( [[ij for ij in i] for i in top_book_query_value])
+    df.columns = ['Title', 'First Name', 'Last Name', 'Rating']
+    print(df)
 
 
 # Secret key for extra protection
-auth.secret_key = '####'
+auth.secret_key = '85002040'
 
 # Add the function by name to the jinja environment.
 auth.jinja_env.globals.update(top_rated_book=top_rated_book)
@@ -65,14 +76,6 @@ def home():
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Connect to database
-        mydb = (mysql.connector.connect(
-            host='localhost',
-            user='root',
-            password='####',
-            database='virtual_bookshelf'
-        ))
-
         # Stores email and password into variables
         email = request.form['email']
         password = request.form['password']
@@ -105,6 +108,9 @@ def login():
             session['uID'] = login_query_value[0]
             # Redirect to home page
             # return render_template('login.html')
+
+            # Top 5 Books
+            top_rated_book()
 
             # print(f"json: {jsonify(top_book_query_value)}")
             # top_book_query_value.to_csv('top_book_query_value.csv')
@@ -175,12 +181,6 @@ def logout():
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
-    mydb = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='####',
-        database='virtual_bookshelf'
-    )
     # Check if "email", "password" POST requirements exist (user submitted form)
     if request.method == 'POST':
         # Create variables for easy access
@@ -231,13 +231,6 @@ def register():
 # route decorator to tell Flask what URL should trigger function
 @auth.route('/get_data', methods=['GET',  'POST'])
 def get_data():
-    mydb = (mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='galloGiallo13',
-        database='virtual_bookshelf'
-    ))
-
     title = request.form['title']
     author_fname = request.form['author_fname']
     author_lname = request.form['author_lname']
