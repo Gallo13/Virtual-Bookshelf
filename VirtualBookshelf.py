@@ -26,7 +26,7 @@ auth = Flask(__name__, template_folder='HTML', static_folder='')
 mydb = (mysql.connector.connect(
     host='localhost',
     user='root',
-    password='galloGiallo13',
+    password='####',
     database='virtual_bookshelf'
 ))
 
@@ -60,7 +60,7 @@ def top_rated_book():
 
 
 # Secret key for extra protection
-auth.secret_key = '85002040'
+auth.secret_key = '####'
 
 # Add the function by name to the jinja environment.
 auth.jinja_env.globals.update(top_rated_book=top_rated_book)
