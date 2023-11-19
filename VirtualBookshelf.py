@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Created date: 09/01/2023
-# Last Modified: 11/16/2023
+# Last Modified: 11/18/2023
 # Description: Virtual Bookshelf Webapp/Storage
 # Python, Flask, MySQL
 
@@ -16,11 +16,15 @@ import mysql.connector
 from flask import Flask, render_template, flash, url_for, request, session, jsonify
 from mysql.connector.errors import Error
 import pandas as pd
+import plotly.graph_objects as go
+from plotly.offline import plot
+import plotly.express as px
+from dash import html
+
 # from chart_studio.plotly import plot, iplot
 # from chart_studio.grid_objs import GridDat
 
 auth = Flask(__name__, template_folder='HTML', static_folder='')
-
 
 # Connect to database
 mydb = (mysql.connector.connect(
@@ -30,10 +34,13 @@ mydb = (mysql.connector.connect(
     database='virtual_bookshelf'
 ))
 
+# Secret key for extra protection
+auth.secret_key = '####'
 
-def top_rated_book():
+
+def queries():
     cursor = mydb.cursor()
-    # Top 5 Books
+    # Top 5 Books ----------------------------------------------------------------------------------------
     top_book_query = """SELECT b.title, a.firstname, a.lastname, b.rating
                         FROM books as b
                         JOIN account_books as ab ON b.bID = ab.bID 
@@ -43,33 +50,25 @@ def top_rated_book():
                         ORDER BY rating DESC LIMIT 5;""" % session['uID']
     cursor.execute(top_book_query)
     top_book_query_value = cursor.fetchall()
-    """
-    # json
-    top_books_json = []
-    for book in top_book_query_value:
-        top_books_json.append(book[0])
-    print(top_book_query_value)
-    print(f"json: {json.dumps(top_book_query_value)}")
-    return json.dumps(top_book_query_value)
-    """
-    print(str(top_book_query_value)[0:300])
+    # print(str(top_book_query_value)[0:300])
 
-    df = pd.DataFrame( [[ij for ij in i] for i in top_book_query_value])
-    df.columns = ['Title', 'First Name', 'Last Name', 'Rating']
-    print(df)
+    # Convert SQL Query to Pandas Dataframe
+    top_book_df = pd.DataFrame([[ij for ij in i] for i in top_book_query_value])
+    top_book_df.columns = ['Title', 'First Name', 'Last Name', 'Rating']
 
+    return top_books_df
 
-# Secret key for extra protection
-auth.secret_key = '####'
 
 # Add the function by name to the jinja environment.
-auth.jinja_env.globals.update(top_rated_book=top_rated_book)
+# auth.jinja_env.globals.update(queries=queries)
 
 
 @auth.route('/', methods=['GET', 'POST'])
 def home():
     session['loggedin'] = False
     return render_template('index.html')
+
+
 # ======================================================================================================================
 
 
@@ -91,7 +90,7 @@ def login():
         cursor.execute(login_query)
         # Fetch one record and return the result
         login_query_value = cursor.fetchone()
-        print(login_query_value)
+        # print(login_query_value)
 
         # If account does not exist in accounts table in the database
         if not login_query_value:
@@ -109,60 +108,45 @@ def login():
             # Redirect to home page
             # return render_template('login.html')
 
-            # Top 5 Books
-            top_rated_book()
+            # Run queries function
+            # queries()
 
-            # print(f"json: {jsonify(top_book_query_value)}")
-            # top_book_query_value.to_csv('top_book_query_value.csv')
+            top_book_query = """SELECT b.title, a.firstname, a.lastname, b.rating
+                                FROM books as b
+                                JOIN account_books as ab ON b.bID = ab.bID 
+                                JOIN book_author as ba ON b.bID = ba.bID
+                                JOIN authors as a ON ba.aID = a.aID
+                                WHERE uID = '%s' 
+                                ORDER BY rating DESC LIMIT 5;""" % session['uID']
+            cursor.execute(top_book_query)
+            top_book_query_value = cursor.fetchall()
+            # print(str(top_book_query_value)[0:300])
 
-            # Most Read Author - barplot
-            top_author_query = """ SELECT firstname, lastname, COUNT(lastname) as count
-                                    FROM authors
-                                    INNER JOIN book_author ON authors.aID = book_author.aID
-                                    INNER JOIN account_books ON book_author.bID = account_books.bID
-                                    WHERE account_books.uID = '%s'
-                                    GROUP BY firstname, lastname
-                                    ORDER BY count DESC
-                                    LIMIT 5;""" % session['uID']
-            cursor.execute(top_author_query)
-            top_author_query_value = cursor.fetchall()
-            print(top_author_query_value)
+            # Convert SQL Query to Pandas Dataframe
+            top_book_df = pd.DataFrame([[ij for ij in i] for i in top_book_query_value])
+            top_book_df.columns = ['Title', 'First Name', 'Last Name', 'Rating']
 
-            # Oldest Published Book
-            oldest_published_query = """SELECT title, date_published
-                                                    FROM books 
-                                                    INNER JOIN account_books ON books.bID = account_books.bID 
-                                                    WHERE uID = '%s' 
-                                                    ORDER BY date_published ASC LIMIT 5""" % session['uID']
-            cursor.execute(oldest_published_query)
-            oldest_published_query_value = cursor.fetchall()
-            print(oldest_published_query_value)
+            # Plotly Chart
+            fig2 = px.bar(top_book_df,
+                          x='Title',
+                          y='Rating',
+                          hover_data=['First Name', 'Last Name'],
+                          labels={'x': 'Title', 'y': 'Rating'},
+                          title="Your Top 4 Books")
+            fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)')
+            """fig2 = go.Figure(
+                data=[go.Bar(
+                    x=top_book_df['Title'],
+                    y=top_book_df['Rating'])],
+                hover_data=['First Name', 'Last Name'],
+                labels={'x': 'Title', 'y': 'Rating'},
+                layout_title_text="Your Top 5 Books"
+            )"""
+            top_book_plot = plot(fig2, include_plotlyjs=False, output_type='div')
+            html.Div([top_book_plot])
+            # fig2.show(renderer='svg', width=500, height=500)
 
-            """
-            # Longest Series
-            longest_series_query = ""SELECT series FROM series INNER JOIN books ON series.sID = books.sID
-                                    INNER JOIN account_books ON books.bID = account_books.bID
-                                    WHERE uID = '%s' ORDER BY seriesNum DESC LIMIT 5"" % session['uID']
-            cursor.execute(longest_series_query)
-            longest_series_query_value = cursor.fetchone()
-            print(longest_series_query_value)
-
-            # Count Each Genre
-            genre_count_query = ""SELECT genre, COUNT(*) FROM genre INNER JOIN books ON genre.gID = books.bID
-                                    INNER JOIN account_books ON books.bID = account_books.bID
-                                    WHERE uID = '%s' GROUP BY genre'"" % session['uID']
-            cursor.execute(genre_count_query)
-            genre_count_query_value = cursor.fetchone()
-            print(genre_count_query_value)
-
-            # Count of all books under account
-            books_count_query = ""SELECT COUNT(*) FROM account_books WHERE uID = '%s'"" % session['uID']
-            cursor.execute(books_count_query)
-            books_count_query_value = cursor.fetchone()
-            print(books_count_query_value)
-            """
-
-            return render_template('login.html')
+        return render_template('login.html', top_book_plot=top_book_plot)
 
     # ==================================================================================================================
 
@@ -176,6 +160,8 @@ def logout():
     session['loggedin'] = False
     msg = 'You have successfully logged out'
     return render_template('index.html', msg=msg)
+
+
 # ======================================================================================================================
 
 
@@ -225,11 +211,13 @@ def register():
 
     # Show registration form with message (if any)
     # return render_template('login.html', msg=msg)
+
+
 # ======================================================================================================================
 
 
 # route decorator to tell Flask what URL should trigger function
-@auth.route('/get_data', methods=['GET',  'POST'])
+@auth.route('/get_data', methods=['GET', 'POST'])
 def get_data():
     title = request.form['title']
     author_fname = request.form['author_fname']
@@ -284,7 +272,7 @@ def get_data():
                         # Inserts book into database
                         books_insert = ("""INSERT INTO books (bID, title, pages, rating, date_added, date_published) 
                                          VALUES ('%s', '%s', %s, '%s', '%s',  '%s');"""
-                                        % (str(uuid4()), title, int(pages), rating, date_added,  date_published))
+                                        % (str(uuid4()), title, int(pages), rating, date_added, date_published))
                         cursor.execute(books_insert)
                         # Executes query
                         cursor.execute(book_query)
@@ -505,8 +493,8 @@ def get_data():
 
                             # Checks to make sure book_genre is in database
                             book_genre_query = (
-                                        """SELECT DISTINCT bID, gID FROM book_genre WHERE bID = '%s' AND gID = '%s'"""
-                                        % (book_value, genre_value))
+                                    """SELECT DISTINCT bID, gID FROM book_genre WHERE bID = '%s' AND gID = '%s'"""
+                                    % (book_value, genre_value))
                             # Executes query
                             cursor.execute(book_genre_query)
                             # Stores query results into variable
