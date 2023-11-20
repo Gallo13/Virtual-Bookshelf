@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Created date: 09/01/2023
-# Last Modified: 11/18/2023
+# Last Modified: 11/20/2023
 # Description: Virtual Bookshelf Webapp/Storage
 # Python, Flask, MySQL
 
@@ -38,7 +38,7 @@ mydb = (mysql.connector.connect(
 auth.secret_key = '####'
 
 
-def queries():
+def top_books():
     cursor = mydb.cursor()
     # Top 5 Books ----------------------------------------------------------------------------------------
     top_book_query = """SELECT b.title, a.firstname, a.lastname, b.rating
@@ -56,11 +56,157 @@ def queries():
     top_book_df = pd.DataFrame([[ij for ij in i] for i in top_book_query_value])
     top_book_df.columns = ['Title', 'First Name', 'Last Name', 'Rating']
 
-    return top_books_df
+    # Plotly Chart
+    book_fig = px.bar(top_book_df,
+                  x='Title',
+                  y='Rating',
+                  hover_data=['First Name', 'Last Name'],
+                  labels={'x': 'Title', 'y': 'Rating'},
+                  title="Your Top 5 Books",
+                  orientation='h')
+    book_fig.update_layout(paper_bgcolor='rgba(0,0,0,0)')
+    # fig2.update_yaxes(autorange="reversed")
+
+    top_book_plot = plot(book_fig, include_plotlyjs=False, output_type='div')
+
+    return top_book_plot
+
+
+def top_authors():
+    cursor = mydb.cursor()
+    # Most Read Author ----------------------------------------------------------------------------------------
+    top_author_query = """ SELECT firstname, lastname, COUNT(lastname) as count
+                           FROM authors
+                           JOIN book_author ON authors.aID = book_author.aID
+                           JOIN account_books ON book_author.bID = account_books.bID
+                           WHERE account_books.uID = '%s'
+                           GROUP BY firstname, lastname
+                           ORDER BY count DESC
+                           LIMIT 5;""" % session['uID']
+    cursor.execute(top_author_query)
+    top_author_query_value = cursor.fetchall()
+    # print(str(top_author_query_value)[0:300])
+
+    # Convert SQL Query to Pandas Dataframe
+    top_author_df = pd.DataFrame([[ij for ij in i] for i in top_author_query_value])
+    top_author_df.columns = ['First Name', 'Last Name', 'Count']
+
+    # Plotly Chart
+    author_fig = px.bar(top_author_df,
+                  x='Count',
+                  y='Last Name',
+                  hover_data=['First Name'],
+                  labels={'x': 'Count', 'y': 'Last Name'},
+                  title="Your Top 5 Authors",
+                  orientation='h')
+    author_fig.update_layout(paper_bgcolor='rgba(0,0,0,0)')
+    author_fig.update_yaxes(autorange="reversed")
+
+    top_author_plot = plot(author_fig, include_plotlyjs=False, output_type='div')
+
+    return top_author_plot
+
+
+def oldest_books():
+    cursor = mydb.cursor()
+    # Top 5 Oldest Books ----------------------------------------------------------------------------------------
+    oldest_published_query = """SELECT title, date_published
+                                FROM books 
+                                JOIN account_books ON books.bID = account_books.bID 
+                                WHERE uID = '%s' 
+                                ORDER BY date_published ASC LIMIT 5""" % session['uID']
+    cursor.execute(oldest_published_query)
+    oldest_published_query_value = cursor.fetchall()
+    # print(str(oldest_published_query_value)[0:300])
+
+    # Convert SQL Query to Pandas Dataframe
+    oldest_published_df = pd.DataFrame([[ij for ij in i] for i in oldest_published_query_value])
+    oldest_published_df.columns = ['Title', 'Date Published']
+
+    # Plotly Chart
+    oldest_fig = px.line(oldest_published_df,
+                         y='Date Published',
+                         x='Title',
+                         hover_data=['Title'],
+                         labels={'x': 'Date Published', 'y': 'Title'},
+                         title="Your Top 5 Oldest Published Books")
+    oldest_fig.update_layout(paper_bgcolor='rgba(0,0,0,0)')
+    oldest_fig.update_traces(textfont_color='rgba(196, 186, 166, 1)')
+    # fig4.update_yaxes(autorange="reversed")
+
+    oldest_published_plot = plot(oldest_fig, include_plotlyjs=False, output_type='div')
+
+    return oldest_published_plot
+
+
+def longest_series():
+    cursor = mydb.cursor()
+    # Top 5 Longest Series ----------------------------------------------------------------------------------------
+    longest_series_query = """SELECT b.title, s.seriesName, MAX(b.number_in_series) as NumberInSeries
+                              FROM series as s
+                              JOIN book_series as bs ON s.sID = bs.sID
+                              JOIN books as b ON bs.bID = b.bID
+                              JOIN account_books as ab ON b.bID = ab.bID
+                              WHERE uID = '%s';""" % session['uID']
+    cursor.execute(longest_series_query)
+    longest_series_query_value = cursor.fetchall()
+    # print(str(longest_series_query_value)[0:300])
+
+    # Convert SQL Query to Pandas Dataframe
+    longest_series_df = pd.DataFrame([[ij for ij in i] for i in longest_series_query_value])
+    longest_series_df.columns = ['Title', 'Series Name', 'Number In Series']
+
+    # Plotly Chart
+    series_fig = px.bar(longest_series_df,
+                        x='Number In Series',
+                        y='Title',
+                        hover_data=['Series Name'],
+                        labels={'x': 'Number In Series', 'y': 'Title'},
+                        title="Your Top 5 Longest Series")
+    series_fig.update_layout(paper_bgcolor='rgba(0,0,0,0)')
+    #series_fig.update_yaxes(autorange="reversed")
+
+    longest_series_plot = plot(series_fig, include_plotlyjs=False, output_type='div')
+
+    return longest_series_plot
+
+
+def top_genres():
+    cursor = mydb.cursor()
+    # Top 5 Genres ----------------------------------------------------------------------------------------
+    top_genres_query = """SELECT g.genre, COUNT(DISTINCT g.genre) as TotalCount
+                          FROM genre as g
+                          JOIN book_genre as bg ON g.gID = bg.gID
+                          JOIN books as b ON bg.bID = b.bID
+                          JOIN account_books as ab ON ab.bID = ab.bID
+                          WHERE ab.uID = '%s' GROUP BY g.genre;""" % session['uID']
+    cursor.execute(top_genres_query)
+    top_genres_query_value = cursor.fetchall()
+    # print(str(top_genres_query_value)[0:300])
+
+    # Convert SQL Query to Pandas Dataframe
+    top_genres_df = pd.DataFrame([[ij for ij in i] for i in top_genres_query_value])
+    top_genres_df.columns = ['Genre', 'Count']
+
+    # print(top_genres_df)
+    # Plotly Chart
+    genre_fig = px.pie(top_genres_df,
+                       values='Count',
+                       names='Genre',
+                       title="Count of all Genres",
+                       color_discrete_sequence=px.colors.sequential.YlOrBr)
+    genre_fig.update_layout(paper_bgcolor='rgba(0,0,0,0)')
+
+    top_genres_plot = plot(genre_fig, include_plotlyjs=False, output_type='div')
+    return top_genres_plot
 
 
 # Add the function by name to the jinja environment.
-# auth.jinja_env.globals.update(queries=queries)
+auth.jinja_env.globals.update(top_books=top_books)
+auth.jinja_env.globals.update(top_authors=top_authors)
+auth.jinja_env.globals.update(oldest_books=oldest_books)
+auth.jinja_env.globals.update(longest_series=longest_series)
+auth.jinja_env.globals.update(top_genres=top_genres)
 
 
 @auth.route('/', methods=['GET', 'POST'])
@@ -108,45 +254,13 @@ def login():
             # Redirect to home page
             # return render_template('login.html')
 
-            # Run queries function
-            # queries()
+            # Run query functions
+            top_books()
+            top_authors()
 
-            top_book_query = """SELECT b.title, a.firstname, a.lastname, b.rating
-                                FROM books as b
-                                JOIN account_books as ab ON b.bID = ab.bID 
-                                JOIN book_author as ba ON b.bID = ba.bID
-                                JOIN authors as a ON ba.aID = a.aID
-                                WHERE uID = '%s' 
-                                ORDER BY rating DESC LIMIT 5;""" % session['uID']
-            cursor.execute(top_book_query)
-            top_book_query_value = cursor.fetchall()
-            # print(str(top_book_query_value)[0:300])
-
-            # Convert SQL Query to Pandas Dataframe
-            top_book_df = pd.DataFrame([[ij for ij in i] for i in top_book_query_value])
-            top_book_df.columns = ['Title', 'First Name', 'Last Name', 'Rating']
-
-            # Plotly Chart
-            fig2 = px.bar(top_book_df,
-                          x='Title',
-                          y='Rating',
-                          hover_data=['First Name', 'Last Name'],
-                          labels={'x': 'Title', 'y': 'Rating'},
-                          title="Your Top 4 Books")
-            fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)')
-            """fig2 = go.Figure(
-                data=[go.Bar(
-                    x=top_book_df['Title'],
-                    y=top_book_df['Rating'])],
-                hover_data=['First Name', 'Last Name'],
-                labels={'x': 'Title', 'y': 'Rating'},
-                layout_title_text="Your Top 5 Books"
-            )"""
-            top_book_plot = plot(fig2, include_plotlyjs=False, output_type='div')
-            html.Div([top_book_plot])
             # fig2.show(renderer='svg', width=500, height=500)
 
-        return render_template('login.html', top_book_plot=top_book_plot)
+        return render_template('login.html')
 
     # ==================================================================================================================
 
