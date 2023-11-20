@@ -287,16 +287,20 @@ input[type=number]
         </nav>
         <div class="tab-content" id="nav-tabContent">
           <div class="tab-pane fade show active" id="nav-rated" role="tabpanel" aria-labelledby="nav-rated-tab">
-              <div>
-                  {{ top_book_plot }}
-              </div>
+              <div>{{ top_books()|safe }}</div>
           </div>
           <div class="tab-pane fade" id="nav-authors" role="tabpanel" aria-labelledby="nav-authors-tab">
-              Query
+              <div>{{ top_authors()|safe }}</div>
           </div>
-          <div class="tab-pane fade" id="nav-genres" role="tabpanel" aria-labelledby="nav-genres-tab">Query 3</div>
-          <div class="tab-pane fade" id="nav-series" role="tabpanel" aria-labelledby="nav-series-tab">Query 4</div>
-          <div class="tab-pane fade" id="nav-published" role="tabpanel" aria-labelledby="nav-published-tab">Query 5</div>
+          <div class="tab-pane fade" id="nav-published" role="tabpanel" aria-labelledby="nav-published-tab">
+              <div>{{ oldest_books()|safe }}</div>
+          </div>
+          <div class="tab-pane fade" id="nav-series" role="tabpanel" aria-labelledby="nav-series-tab">
+              <div>{{ longest_series()|safe }}</div>
+          </div>
+          <div class="tab-pane fade" id="nav-genres" role="tabpanel" aria-labelledby="nav-genres-tab">
+              <div>{{ top_genres()|safe }}</div>
+          </div>
         </div>
       </div>
     </div>
