@@ -19,9 +19,17 @@ FUTURE:
 ![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/d1530a52-c964-4778-b6d8-ee2640923f9d)
 ![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/4799411c-c4ec-4fa0-a16c-8b5c7300174a)
 
+EER Diagram
+![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/cce6f3c4-9425-4bee-9e83-de47e21b464c)
+
 
 Next to be done: <br>
-(1) tooltip to show how to input genre and author ("Please use commas to separate multiple genres") <br>
-(2) add chart.js charts to show query results/statistics on books or just use seaborn/matplotlib <br>
-(3) add recommender system <be>
-(4) add OpenCV for barcode scanner/realtime image detection
+(1) Tooltip to show how to input genre and author ("Please use commas to separate multiple genres") <br>
+(2) SQL -> Database <br>
+(3) Finish recommender system (content filtering) based on title, author, genre, rating of entire library <br>
+(4) Give user a choice to select a specific book to have rec sys use to recommend books <br>
+(5) Add rest of my books <br>
+(6) Create unit test for adding books and rec sys <br>
+(7) Have other users test application <br>
+(8) Add collaborative filtering on rec sys <br>
+(9) add OpenCV for barcode scanner/realtime image detection <br>
