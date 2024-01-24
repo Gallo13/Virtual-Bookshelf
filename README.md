@@ -9,15 +9,15 @@ FUTURE:
 - It will show analytics on what kind of books I generally read, my average book length and my average book ratings, most read genre, and most read author.
 - will have a book recommender for future books based on what I've read
 
-![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/c53caf3d-c308-4766-b073-8b9fb3a40832)
-![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/1bf020c0-3b6d-4f68-b147-4c8df98e3ccf)
-![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/9980ab4c-f8a0-4c88-bcfc-30e5416d1380)
-![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/0ad74030-5a6f-42b3-81a4-c8d55d9abc5b)
-![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/630e88fc-312b-4fd7-9e6d-f72b76e0fca0)
-![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/b1c83cd9-94a0-42c8-8f87-77545d20e75d)
-![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/af7676b3-326e-44d5-b73c-fe90cac59dac)
-![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/d1530a52-c964-4778-b6d8-ee2640923f9d)
-![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/4799411c-c4ec-4fa0-a16c-8b5c7300174a)
+![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/9edf9b2b-a881-489c-8405-c1a0e409bcd9)
+![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/14277c80-b7f8-476c-8b11-796f5a61e547)
+![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/0ce16640-f934-4a2c-9bd8-29ac4960fa32)
+![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/3707fd0f-3d79-479d-91c7-4afc48c1e48f)
+![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/d79f958e-248c-48bb-921b-649438424434)
+![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/7177f3ef-e577-44ce-aa34-01b564258d12)
+![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/c4599664-c833-40e5-a0c2-222c5fcd5f12)
+![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/ba8acd67-ba78-4214-a063-59db6c7048d3)
+![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/6a372335-d4e7-4eba-98ef-91f963a29a5b)
 
 EER Diagram
 ![image](https://github.com/Gallo13/Virtual-Bookshelf/assets/54815820/cce6f3c4-9425-4bee-9e83-de47e21b464c)
