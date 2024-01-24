@@ -7,9 +7,15 @@
 from plotly.offline import plot
 import plotly.express as px
 import pandas as pd
+from flask import Flask, session
+from database import execute_sql_query
 
 
 def top_books():
+    """
+
+    :return:
+    """
     # Top 5 Books ----------------------------------------------------------------------------------------
     query = """SELECT b.title, a.firstname, a.lastname, b.rating
                FROM books as b
@@ -18,9 +24,8 @@ def top_books():
                JOIN authors as a ON ba.aID = a.aID
                WHERE uID = %s 
                ORDER BY rating DESC LIMIT 5;"""
-    # values = (session['uID'], )
-    values = session['uID']
-    top_book_query_value = execute_sql_query(query, values)
+    qvalues = session['uID']
+    top_book_query_value = execute_sql_query(query, qvalues)
     # print(str(top_book_query_value)[0:300])
 
     # Convert SQL Query to Pandas Dataframe
@@ -49,12 +54,12 @@ def top_authors():
                FROM authors
                JOIN book_author ON authors.aID = book_author.aID
                JOIN account_books ON book_author.bID = account_books.bID
-               WHERE account_books.uID = '%s'
+               WHERE account_books.uID = %s
                GROUP BY firstname, lastname
                ORDER BY count DESC
                LIMIT 5;"""
-    values = session['uID']
-    top_author_query_value = execute_sql_query(query, values)
+    qvalues = session['uID']
+    top_author_query_value = execute_sql_query(query, qvalues)
     # print(str(top_author_query_value)[0:300])
 
     # Convert SQL Query to Pandas Dataframe
@@ -82,10 +87,10 @@ def oldest_books():
     query = """SELECT title, date_published
                FROM books 
                JOIN account_books ON books.bID = account_books.bID 
-               WHERE uID = '%s' 
+               WHERE uID = %s 
                ORDER BY date_published ASC LIMIT 5"""
-    values = session['uID']
-    oldest_published_query_value = execute_sql_query(query, values)
+    qvalues = session['uID']
+    oldest_published_query_value = execute_sql_query(query, qvalues)
     # print(str(oldest_published_query_value)[0:300])
 
     # Convert SQL Query to Pandas Dataframe
@@ -115,9 +120,9 @@ def longest_series():
                JOIN book_series as bs ON s.sID = bs.sID
                JOIN books as b ON bs.bID = b.bID
                JOIN account_books as ab ON b.bID = ab.bID
-               WHERE uID = '%s';"""
-    values = session['uID']
-    longest_series_query_value = execute_sql_query(query, values)
+               WHERE uID = %s;"""
+    qvalues = session['uID']
+    longest_series_query_value = execute_sql_query(query, qvalues)
     # print(str(longest_series_query_value)[0:300])
 
     # Convert SQL Query to Pandas Dataframe
@@ -145,9 +150,9 @@ def top_genres():
                JOIN book_genre as bg ON g.gID = bg.gID
                JOIN books as b ON bg.bID = b.bID
                JOIN account_books as ab ON ab.bID = ab.bID
-               WHERE ab.uID = '%s' GROUP BY g.genre;"""
-    values = session['uID']
-    top_genres_query_value = execute_sql_query(query, values)
+               WHERE ab.uID = %s GROUP BY g.genre;"""
+    qvalues = session['uID']
+    top_genres_query_value = execute_sql_query(query, qvalues)
     # print(str(top_genres_query_value)[0:300])
 
     # Convert SQL Query to Pandas Dataframe
