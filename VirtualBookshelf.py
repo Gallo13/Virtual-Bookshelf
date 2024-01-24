@@ -195,6 +195,7 @@ def get_data():
         already inputted the book) and if they didn't we will add the book to the user (bID into account_books table)
         """
 
+        # -- BOOK ----------------------------------------------
         # Checks if book already exists in database (books table)
         book_query_value = check_book_exists(title, pages, date_published)
         # If book exists in database (books table) but not associated with user
@@ -205,7 +206,7 @@ def get_data():
 
         """
          If book does not exist in database (books table) then we need to insert the book into the database.
-         """
+        """
         # Insert book into database
         ivalue = (str(uuid4()), title, int(pages), rating, date_added, date_published, number_in_series)
         book_value = insert_book(query, ivalue)
@@ -216,17 +217,69 @@ def get_data():
         account_books_value = insert_account_books(query, ivalue)
         print('Book added to account: ', title, account_books_value[0])
 
+        # -- AUTHOR -----------------------------
         # Checks if author is already in database
         author_query_value = check_author_exists(author_fname, author_lname)
         # If author in database but needs to be associated with the new book
         if author_query_value:
             print("Author already exists: ", author_fname, author_lname, author_query_value[0])
-            # Checks if author is associated with the book and if it is not, it insert it into account_books tables
+            # Checks if author is associated with the book and if it is not, it insert it into account_books table
             return handle_author_exists(author_query_value[0])
         else:
+            # Insert author into database
             insert_book_author(author_query_value)
-            print("Author does not exist: ", author_fname, author_lname)
-"""
+            print("Author added: ", author_fname, author_lname, author_query_value[0])
+            # Insert author into book_authors table (register author under current book)
+            handle_author_exists(author_query_value[0])
+
+        # -- GENRE -----------------------------
+        # Checks if there are multiple genres inputted
+        if ',' in genre:
+            # Separates string at comma and creates a string
+            genre_split = [x.strip() for x in genre.split(',')]
+            for g in genre_split:
+                genre_query_value = check_genre_exists(g)
+                if  genre_query_value:
+                    print("Genre already exists: ", g, genre_query_value[0])
+                    # Checks if genre is associated with the book and if it is not, it insert it into book_genres table
+                    handle_genre_exists(genre_query_value[0])
+                else:
+                    # Insert genre into database
+                    insert_book_genre(genre_query_value)
+                    print("Genre added: ", g, genre_query_value[0])
+                    # Insert genre into book_genres table (register genre under current book)
+                    handle_genre_exists(genre_query_value[0])
+        # If there is only one genre inputted
+        else:
+            # Checks if genre is already in database
+            genre_query_value = check_genre_exists(genre)
+            # If genre in database but needs to be associated with the new book
+            if genre_query_value:
+                print("Genre already exists: ", genre, genre_query_value[0])
+                # Checks if genre is associated with the book and if it is not, it insert it into book_genres table
+                return handle_genre_exists(genre_query_value[0])
+            else:
+                # Insert author into database
+                insert_book_genre(genre_query_value)
+                print("Genre added: ", genre, genre_query_value[0])
+                # Insert genre into book_genres table (register genre under current book)
+                handle_genre_exists(genre_query_value[0])
+
+        # -- PUBLISHER -----------------------------
+        # Checks if publisher is already in database
+        publisher_query_value = check_publisher_exists(publisher)
+        # If publisher in database but needs to be associated with the new book
+        if publisher_query_value:
+            print("Publisher already exists: ", publisher, publisher_query_value[0])
+            # Checks if publisher is associated with the book and if it is not, it insert it into book_publisher table
+            return handle_publisher_exists(publisher_query_value[0])
+        else:
+            # Insert publisher into database
+            insert_book_publisher(publisher_query_value)
+            print("Publisher added: ", publisher, publisher_query_value[0])
+            # Insert genre into book_genres table (register genre under current book)
+            return handle_publisher_exists(publisher_query_value[0])
+    """
 
         # Check if book already exists
         else:
@@ -539,7 +592,7 @@ def get_data():
                 print("Message: ", err.msg)
             finally:
                 return render_template(login_html)
-            """
+    """
 
 
 if __name__ == '__main__':
