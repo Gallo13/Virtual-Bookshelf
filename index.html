@@ -242,12 +242,12 @@ input[type=number]
 </div>
 
 <!-- Adding to Library -------------------------------------------------------->
-<div class="w3-container section w3-mobile w3-responsive">
-  <div class="w3-container w3-cell couch w3-hide-small" style="padding-left:0px"><img class="w3-image" src="images/spiral-staircase-877834.jpg" style="width:100%; height:100%;"></div>
+<div class="w3-display-container section w3-mobile w3-responsive">
+  <div class="w3-container couch" style="padding-left:0px"><img class="w3-image" src="images/spiral-staircase-877834.jpg" style="width:100%; height:100%;"></div>
 
-  <div class="w3-container w3-cell adding w3-padding-32 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+  <div class="w3-panel adding w3-padding-48 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
     <p class='w3-padding-large' style="font-size:4.5vw;">Add a Book to Your Library</p>
-    <form class="w3-container was-validated" style="font-size:1.5vw;" method="POST" action="/get_data">
+    <form class="w3-container was-validated" style="font-size:1vw;" method="POST" action="/get_data">
         <!-- TITLE -->
         <label for="title">Title:</label>
         <input class="w3-input textbox" type="text" name="title" id="title"><br>
@@ -279,22 +279,28 @@ input[type=number]
                 <input class="w3-input textbox" type="number" name="pages" id="pages" min="1" value=""><br>
             </div>
 
-            <!-- RATING -->
-            <div class="w3-col s4 w3-center" style="back-ground:#1B201E">
-                <label for="rating">Rating:</label>
-                <select class="w3-select" name="rating" id="rating" style="back-ground:#1B201E">
-                  <option value="" selected>1 Star </option>
-                  <option value="2">2 Stars</option>
-                  <option value="3">3 Stars</option>
-                  <option value="4">4 Stars</option>
-                  <option value="5">5 Stars</option>
-                </select><br><br><br>
-            </div>
-
             <!-- DATE PUBLISHED -->
             <div class="w3-col s4 w3-center">
                 <label for="date_published">Original Publish Date:</label><br>
                 <input id="date_published" name="date_published" type="date">
+            </div>
+
+            <div>
+                <!-- Read CHECKBOX -->
+                <label> Read it already? </label>
+                <input type="checkbox" name="read_checkbox" id="myReadCheck" onclick="readCollapse();">
+
+                <!-- RATING -->
+                <div class="w3-col s4 w3-center" id="readText" style="back-ground:#1B201E; display:none;">
+                    <label for="ratingSelect">Rating:</label>
+                    <select class="w3-select" name="rating" id="ratingSelect" style="back-ground:#1B201E">
+                      <option value="1" selected>1 Star </option>
+                      <option value="2">2 Stars</option>
+                      <option value="3">3 Stars</option>
+                      <option value="4">4 Stars</option>
+                      <option value="5">5 Stars</option>
+                    </select><br><br><br>
+                </div>
             </div>
         </div>
         <br>
@@ -303,7 +309,7 @@ input[type=number]
         <div>
             <!-- SERIES CHECKBOX -->
             <label> Part of a Series?   </label>
-            <input type="checkbox" name="checkbox" id="myCheck" onclick="seriesCollapse()">
+            <input type="checkbox" name="series_checkbox" id="mySeriesCheck" onclick="seriesCollapse()">
 
             <!-- SERIES DROPDOWN AFTER CHECKBOX -->
             <div id="seriesText" style="display:none">
@@ -335,18 +341,16 @@ input[type=number]
   <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
     <p class='w3-padding-large' style="font-size:4.5vw;">Purpose and Functionality</p>
     <p class='w3-padding-large w3-center' style="font-size:2vw;">
-        This Virtual Bookshelf serves as a way <br>
-        to store all the books I have read and <br>
-        own. The technologies used to make <br>
-        this website are Python, MySQL, and <br>
-        Flask. This website allows me to <br>
-        update my database. This project is <br>
-        scalable and I will add data analytics<br>
-        to query the data and learn more <br>
-        about my reading habits. In the <br>
-        future, I will also add a recommender<br>
-        system to find more books that<br>
-        would suit my taste.</p>
+        "Explore my Virtual Bookshelf – a digital haven for cataloging and <br>
+        preserving the library of books I've read and collected. Powered by <br>
+        cutting-edge technologies including Python, MySQL, and Flask, this <br>
+        dynamic platform enables seamless updates to my book database. I also <br>
+        integrated data analytics to uncover insights into my reading habits. <br>
+        Looking ahead, I have exciting plans to introduce a personalized <br>
+        content-based recommender system, enhancing the experience by suggesting <br>
+        books tailored to my unique preferences. Join me on this literary journey <br>
+        as my Virtual Bookshelf continues to evolve and grow." <br>
+    </p>
   </div>
    <div class="w3-container couch" style="padding-right:0px"><img class="w3-image" src="images/table.jpg" style="width:100%; height:100%;"></div>
 </div>
