@@ -53,6 +53,7 @@ def execute_sql_query(query, qvalues):
             cursor.execute(query)
 
         result = cursor.fetchall()
+        return result
     except mysql.connector.Error as err:
         # Handles Errors and gives the error codes to let us know what the issue is
         print(err)
@@ -62,10 +63,16 @@ def execute_sql_query(query, qvalues):
     finally:
         cursor.close()
         mydb.close()
-        return result
+
+        """
+        except Exception as e:
+            # Rollback the changes and close the cursor and database connection
+            print(f"An error occurred: {e}")
+            mydb.rollback()
+        """
 
 
-def insert_data(insert, ivalues):
+def insert_book(insert, ivalues):
     """
         Executes an INSERT statement with the provided parameters and values.
 
@@ -76,33 +83,6 @@ def insert_data(insert, ivalues):
         Returns:
             result (list): The result of the query execution.
     """
-
-    # Establish a database connection
-    mydb = establish_database_connection()
-    cursor = mydb.cursor()
-
-    try:
-        # Execute the INSERT statement with the provided values
-        cursor.execute(insert, ivalues)
-        result = cursor.fetchall()
-
-        # Commit the changes and close the cursor and database connection
-        mydb.commit()
-        cursor.close()
-        mydb.close()
-        return result
-    except mysql.connector.Error as err:
-        # Handles Errors and gives the error codes to let us know what the issue is
-        print(err)
-        print("Error Code: ", err.errno)
-        print("SQLSTATE: ", err.sqlstate)
-        print("Message: ", err.msg)
-        mydb.rollback()
-        cursor.close()
-        mydb.close()
-    """
-    except Exception as e:
-        # Rollback the changes and close the cursor and database connection
-        print(f"An error occurred: {e}")
-        mydb.rollback()
-    """
+    book_insert = ("INSERT INTO books (bID, title, pages, rating, date_added, date_published, number_in_series) "
+                   "VALUES (%s, %s, %s, %s, %s, %s, %s)")
+    ivalues
