@@ -159,6 +159,7 @@ def get_data():
 
     # Checks if user is logged in (if user is not logged in)
     if session['loggedin'] is False:
+        Flash('Please login to add your book!')
         msg = 'Please login to add your book!'
         home_html = 'index.html'
         return render_template(home_html, msg=msg)
@@ -180,26 +181,24 @@ def get_data():
         """
 
         # -- BOOK ----------------------------------------------
-        # Checks if book already exists in database (books table)
+        # Checks if book already exists in database (books table) - executes SELECT statement
         book_query_value = check_book_exists(title, pages, date_published)
-        # If book exists in database (books table) but not associated with user
+        # If book exists in database (books table)
         if book_query_value:
             print("Book already exists: ", title, book_query_value[0])
             # Checks if book is associated with user and if it is not, it insert it into account_books tables
             handle_book_exists(book_query_value[0])
+        else:
+            """
+             If book does not exist in database (books table) then we need to insert the book into the database.
+            """
+            # Insert book into database
+            ivalue = (str(uuid4()), title, int(pages), rating, date_added, date_published, number_in_series)
+            book_value = insert_book(insert, ivalue)
+            print('Book added: ', title, book_value[0])
+            # Checks if book is associated with user and if it is not, it insert it into account_books tables
+            handle_book_exists(book_query_value[0])
 
-        """
-         If book does not exist in database (books table) then we need to insert the book into the database.
-        """
-        # Insert book into database
-        ivalue = (str(uuid4()), title, int(pages), rating, date_added, date_published, number_in_series)
-        book_value = insert_book(insert, ivalue)
-        print('Book added: ', title, book_value[0])
-
-        # Insert book into account_books table (register book under current user)
-        ivalue = (session['uID'], book_value[0])
-        account_books_value = insert_account_books(query, ivalue)
-        print('Book added to account: ', title, account_books_value[0])
 
         # -- AUTHOR -----------------------------
         # Checks if author is already in database
