@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Date created: 01/19/2024
-# Last modified: 01/19/2024
+# Last modified: 01/30/2024
 # Description: Functions for Plotly charts
 
 
@@ -13,17 +13,17 @@ from database import execute_sql_query
 
 def top_books():
     """
-
-    :return:
+    :return: Plotly chart of the top 5 books for the user.
     """
+
     # Top 5 Books ----------------------------------------------------------------------------------------
-    query = """SELECT b.title, a.firstname, a.lastname, b.rating
-               FROM books as b
-               JOIN account_books as ab ON b.bID = ab.bID 
-               JOIN book_author as ba ON b.bID = ba.bID
-               JOIN authors as a ON ba.aID = a.aID
-               WHERE uID = %s 
-               ORDER BY rating DESC LIMIT 5;"""
+    query = ("SELECT b.title, a.firstname, a.lastname, b.rating "
+             "FROM books as b "
+             "JOIN account_books as ab ON b.bID = ab.bID "
+             "JOIN book_author as ba ON b.bID = ba.bID "
+             "JOIN authors as a ON ba.aID = a.aID "
+             "WHERE uID = %s "
+             "ORDER BY rating DESC LIMIT 5;")
     qvalues = session['uID']
     top_book_query_value = execute_sql_query(query, qvalues)
     # print(str(top_book_query_value)[0:300])
@@ -49,6 +49,9 @@ def top_books():
 
 
 def top_authors():
+    """
+    :return: Plotly chart of the top 5 authors for the user.
+    """
     # Most Read Author ----------------------------------------------------------------------------------------
     query = """SELECT firstname, lastname, COUNT(lastname) as count
                FROM authors
@@ -83,6 +86,9 @@ def top_authors():
 
 
 def oldest_books():
+    """
+    :return: Plotly chart of the 5 oldest published books for the user.
+    """
     # Top 5 Oldest Books ----------------------------------------------------------------------------------------
     query = """SELECT title, date_published
                FROM books 
@@ -114,6 +120,9 @@ def oldest_books():
 
 
 def longest_series():
+    """
+    :return: Plotly chart of the longest series of books for the user.
+    """
     # Top 5 Longest Series ----------------------------------------------------------------------------------------
     query = """SELECT b.title, s.seriesName, MAX(b.number_in_series) as NumberInSeries
                FROM series as s
@@ -144,6 +153,9 @@ def longest_series():
 
 
 def top_genres():
+    """
+    :return: Plotly chart of the top 5 genres for the user.
+    """
     # Top 5 Genres ----------------------------------------------------------------------------------------
     query = """SELECT g.genre, COUNT(DISTINCT g.genre) as TotalCount
                FROM genre as g
