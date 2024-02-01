@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Date created: 01/19/2024
-# Last modified: 01/30/2024
+# Last modified: 01/31/2024
 # Description: Function for adding books to the user's database
 
 
@@ -40,14 +40,14 @@ def insert_account_books():
     """
     # Check if book exists in account_books table
     query = "SELECT * FROM account_books WHERE bID = %s AND uID = %s"
-    qvalues = (session['bID'], session['uID'])
+    qvalues = (session['bID'], session['uID2'])
     account_books_query_value = execute_sql_query(query, qvalues)
 
     # If the book is not associated with the user
     if not account_books_query_value:
         # Inserts book into account_books table
         query = "INSERT INTO account_books (uID, bID) VALUES (%s, %s);"
-        qvalues = (session['uID'], session['bID'])
+        qvalues = (session['uID2'], session['bID'])
         return execute_sql_query(query, qvalues)
     # If user already inputed the book
     else:
@@ -68,8 +68,7 @@ def insert_book(ivalues):
     try:
         query = ("INSERT INTO books (bID, title, pages, rating, date_added, date_published, number_in_series) "
                  "VALUES (%s, %s, %s, %s, %s, %s, %s)")
-        execute_sql_query(query, ivalues)
-        return print('Book added to database!')
+        return execute_sql_query(query, ivalues)
         # return insert_account_books()
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -95,7 +94,6 @@ def check_author_exists(author_fname, author_lname):
     query = "SELECT aID FROM authors WHERE firstname = %s AND lastname = %s"
     qvalues = (author_fname, author_lname)
     author_id = execute_sql_query(query, qvalues)
-    print('author_id: ', author_id)
     return author_id[0][0] if author_id else None
 
 
@@ -280,7 +278,7 @@ def check_series_exists(series):
             result (list): The result of the query execution.
     """
     # SQL query to check if the author already exists in the database
-    query = "SELECT sID FROM series WHERE series = %s"
+    query = "SELECT sID FROM series WHERE seriesName = %s"
     qvalues = (series,)
     series_id = execute_sql_query(query, qvalues)
     return series_id[0][0] if series_id else None
@@ -319,7 +317,7 @@ def insert_series(ivalues):
             result (list): The result of the query execution.
     """
     try:
-        query = "INSERT INTO series (sID, series) VALUES (%s, %s)"
+        query = "INSERT INTO series (sID, seriesName) VALUES (%s, %s)"
         return execute_sql_query(query, ivalues)
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -347,17 +345,17 @@ def update_read(rating):
     return execute_sql_query(query, qvalues)
 
 
-def update_series(series_num):
+def update_series(number_in_series):
     """
         Updates series data in database (books) using the series_num variable
 
         Parameters:
-            series_num (int): The values to be queried from database
+            number_in_series (int): The values to be queried from database
 
         Returns:
             result (list): The result of the query execution.
     """
     # SQL query to update series data in account_books table
     query = "UPDATE books SET number_in_series = %s WHERE bID = %s;"
-    qvalues = (series_num, session['bID'])
+    qvalues = (number_in_series, session['bID'])
     return execute_sql_query(query, qvalues)
