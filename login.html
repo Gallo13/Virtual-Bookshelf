@@ -251,7 +251,8 @@ input[type=number]
                 <div class="w3-col s4 w3-center" id="readText" style="back-ground:#1B201E; display:none;">
                     <label for="ratingSelect">Rating:</label>
                     <select class="w3-select" name="rating" id="ratingSelect" style="back-ground:#1B201E">
-                      <option value="1" selected>1 Star </option>
+                      <option value="" selected>Select a Rating</option>
+                      <option value="1">1 Star</option>
                       <option value="2">2 Stars</option>
                       <option value="3">3 Stars</option>
                       <option value="4">4 Stars</option>
@@ -292,6 +293,46 @@ input[type=number]
         </div>
     </form>
   </div>
+</div>
+
+<! -- Update a Book Rating ---------------------------------------------------->
+<div class="w3-display-container section w3-mobile w3-responsive">
+  <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+    <p class='w3-padding-large' style="font-size:4.5vw;">
+        Have a book you finally read<br>
+        and want to give it a rating?<br>
+    </p>
+    <form class="w3-container was-validated" style="font-size:1vw;" method="POST" action="/update_rating">
+        <div class="w3-row">
+                <p style="font-size:1.5vw;"> Search book by ISBN! </p>
+                <!-- ISBN Selection -->
+                <div class="w3-col s4 w3-center">
+                    <label for="pages">ISBN:</label>
+                    <input class="w3-input textbox" type="text" name="ISBN" id="isbn" value=""><br>
+                </div>
+                <!-- TEST -->
+                <div class="w3-col s4 w3-center">
+                    <label for="pages">Rating:</label>
+                    <input class="w3-input textbox" type="number" name="rating3" id="rating3" value=""><br>
+                </div>
+                <!-- Rating -->
+                <div class="w3-col s4 w3-center" style="back-ground:#1B201E; display:none;">
+                        <label for="ratingSelect">Rating:</label>
+                        <select class="w3-select" name="rating2" id="ratingSelect2" style="back-ground:#1B201E">
+                          <option value="" selected>Select a Rating</option>
+                          <option value="1">1 Star</option>
+                          <option value="2">2 Stars</option>
+                          <option value="3">3 Stars</option>
+                          <option value="4">4 Stars</option>
+                          <option value="5">5 Stars</option>
+                        </select>
+                </div>
+        </div>
+    </form>
+  </div>
+   <div class="w3-container couch" style="padding-right:0px">
+       <img class="w3-image" src="images/henry-be-TCsCykbwSJw-unsplash.jpg" style="width:100%; height:100%;">
+   </div>
 </div>
 
 <!-- Analytics ---------------------------------------------------------------->
@@ -337,15 +378,15 @@ input[type=number]
   <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
     <p class='w3-padding-large' style="font-size:4.5vw;">Purpose and Functionality</p>
     <p class='w3-padding-large w3-center' style="font-size:2vw;">
-        "Explore my Virtual Bookshelf – a digital haven for cataloging and <br>
-        preserving the library of books I've read and collected. Powered by <br>
+        Explore your Virtual Bookshelf – a digital haven for cataloging and <br>
+        preserving the library of books you've read and collected. Powered by <br>
         cutting-edge technologies including Python, MySQL, and Flask, this <br>
-        dynamic platform enables seamless updates to my book database. I also <br>
-        integrated data analytics to uncover insights into my reading habits. <br>
+        dynamic platform enables seamless updates to your book database. Included is <br>
+        integrated data analytics to uncover insights into your reading habits. <br>
         Looking ahead, I have exciting plans to introduce a personalized <br>
-        content-based recommender system, enhancing the experience by suggesting <br>
-        books tailored to my unique preferences. Join me on this literary journey <br>
-        as my Virtual Bookshelf continues to evolve and grow." <br>
+        content-based recommender system, enhancing your experience by suggesting <br>
+        books tailored to your unique preferences. Join me on this literary journey <br>
+        as your Virtual Bookshelf continues to evolve and grow. <br>
     </p>
   </div>
    <div class="w3-container couch" style="padding-right:0px"><img class="w3-image" src="images/table.jpg" style="width:100%; height:100%;"></div>
