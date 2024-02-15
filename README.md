@@ -24,12 +24,13 @@ EER Diagram
 
 
 Next to be done: <br>
-(1) Tooltip to show how to input genre and author ("Please use commas to separate multiple genres") <br>
-(2) SQL -> Database <br>
-(3) Finish recommender system (content filtering) based on title, author, genre, rating of entire library <br>
-(4) Give user a choice to select a specific book to have rec sys use to recommend books <br>
-(5) Add rest of my books <br>
-(6) Create unit test for adding books and rec sys <br>
-(7) Have other users test application <br>
-(8) Add collaborative filtering on rec sys <br>
-(9) add OpenCV for barcode scanner/realtime image detection <br>
+(1) Deploy on Vercel before deploying on AWS
+(2) Tooltip to show how to input genre and author ("Please use commas to separate multiple genres") <br>
+(3) SQL -> Database <br>
+(4) Finish recommender system (content filtering) based on title, author, genre, rating of entire library <br>
+(5) Give user a choice to select a specific book to have rec sys use to recommend books <br>
+(6) Add rest of my books <br>
+(7) Create unit test for adding books and rec sys <br>
+(8) Have other users test application <br>
+(9) Add collaborative filtering on rec sys <br>
+(10) add OpenCV for barcode scanner/realtime image detection <br>
