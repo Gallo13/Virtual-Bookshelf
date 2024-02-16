@@ -331,7 +331,7 @@ input[type=number]
     </form>
   </div>
    <div class="w3-container couch" style="padding-right:0px">
-       <img class="w3-image" src="images/henry-be-TCsCykbwSJw-unsplash.jpg" style="width:100%; height:100%;">
+       <img class="w3-image" src="images/book.png" style="width:100%; height:100%;">
    </div>
 </div>
 
@@ -373,6 +373,48 @@ input[type=number]
     </div>
   </div>
 </div>
+
+<!-- Recommender  -------------------------------------------------------->
+<div class="w3-display-container section w3-mobile w3-responsive">
+  <div class="w3-container couch" style="padding-left:0px"><img class="w3-image" src="images/henry-be-TCsCykbwSJw-unsplash.jpg" style="width:100%; height:100%;"></div>
+
+  <div class="w3-panel adding w3-padding-48 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+    <p class='w3-padding-large' style="font-size:4.5vw;">Add a Book to Your Library</p>
+    <form class="w3-container was-validated" style="font-size:1vw;" method="POST" action="/get_data">
+        <!-- TITLE -->
+        <label for="title">Title:</label>
+        <input class="w3-input textbox" type="text" name="title" id="title2"><br>
+
+        <!-- AUTHOR FIRST NAME-->
+        <div class="w3-half">
+            <label for="author_fname">Author First Name:</label>
+            <input class="w3-input textbox" type="text" name="author_fname" id="author_fname2" value=""><br>
+        </div>
+
+        <!-- AUTHOR LAST NAME-->
+        <div class="w3-half">
+            <label for="author_lname">Author Last Name:</label>
+            <input class="w3-input textbox" type="text" name="author_lname" id="author_lname2" value=""><br>
+        </div>
+
+        <!-- GENRE -->
+        <label for="genre">Genre:</label>
+        <input class="w3-input textbox" type="text" name="genre" id="genre2" value=""><br>
+
+        <!-- SERIES -->
+        <label for="series">Series Name:</label>
+        <input class="w3-input textbox" type="text" name="series" id="series2" value="">
+
+        <!-- ADD AND CLEAR BUTTONS -->
+        <div class="w3-container">
+            <br><br><br>
+            <input class="w3-btn w3-round-xxlarge w3-ripple" type="submit" value="Recommend!" style="background-color:#502B09">
+            <input class="w3-btn w3-round-xxlarge w3-ripple" type="reset" value="Clear" style="background-color:#502B09">
+        </div>
+    </form>
+  </div>
+</div>
+
 <!-- Purpose and Functionality ------------------------------------------------>
 <div class="w3-display-container section w3-mobile w3-responsive">
   <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
