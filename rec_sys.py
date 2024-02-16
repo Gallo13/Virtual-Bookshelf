@@ -19,8 +19,8 @@ data = pd.read_csv(file, header=None, sep='\t')
 mydb = (mysql.connector.connect(
     host='localhost',
     user='root',
-    password='###',
-    database='###'
+    password='galloGiallo13',
+    database='virtual_bookshelf'
 ))
 
 cursor = mydb.cursor()

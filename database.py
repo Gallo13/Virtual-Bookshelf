@@ -7,12 +7,10 @@ import os
 import mysql.connector
 
 
+# -- CONNECTING TO DATABASE ----------------------------
 def establish_database_connection():
     """
-        Establishes a database connection. The connection is made using the mysql.connector library.
-
-        Parameters:
-            None
+        Establishes a database connection. The connection is made using the mysql connector library.
 
         Returns:
             mydb (mysql.connector.connect): The database connection object.
@@ -20,22 +18,27 @@ def establish_database_connection():
 
     password = os.getenv('MYSQL_PASSWORD')
     # Edit configuration --> environment variables --> MYSQL_PASSWORD
+    try:
+        mydb = (mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password=password,
+            database='virtual_bookshelf'
+        ))
+        return mydb
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        mydb = None
+        return mydb
 
-    mydb = (mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password=password,
-        database='virtual_bookshelf'
-    ))
-    return mydb
 
-
+# -- EXECUTION OF SQL QUERIES ------------------------------
 def execute_sql_query(query, qvalues):
     """
         Executes an SELECT FROM WHERE statement with the provided parameters and values.
 
         Parameters:
-            query (str): The SQL INSERT statement.
+            query (str): The SQL SELECT or INSERT statement.
             qvalues (tuple): The values to be inserted into the database.
 
         Returns:
@@ -47,11 +50,7 @@ def execute_sql_query(query, qvalues):
     cursor = mydb.cursor()
 
     try:
-        if qvalues is not None:
-            cursor.execute(query, qvalues)
-        else:
-            cursor.execute(query)
-
+        cursor.execute(query, qvalues)
         result = cursor.fetchall()
         return result
     except mysql.connector.Error as err:
@@ -61,28 +60,6 @@ def execute_sql_query(query, qvalues):
         print("SQLSTATE: ", err.sqlstate)
         print("Message: ", err.msg)
     finally:
+        mydb.commit()
         cursor.close()
         mydb.close()
-
-        """
-        except Exception as e:
-            # Rollback the changes and close the cursor and database connection
-            print(f"An error occurred: {e}")
-            mydb.rollback()
-        """
-
-
-def insert_book(insert, ivalues):
-    """
-        Executes an INSERT statement with the provided parameters and values.
-
-        Parameters:
-            insert (str): The SQL INSERT statement.
-            ivalues (tuple): The values to be inserted into the database.
-
-        Returns:
-            result (list): The result of the query execution.
-    """
-    book_insert = ("INSERT INTO books (bID, title, pages, rating, date_added, date_published, number_in_series) "
-                   "VALUES (%s, %s, %s, %s, %s, %s, %s)")
-    ivalues
