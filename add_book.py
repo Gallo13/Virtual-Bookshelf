@@ -4,7 +4,7 @@
 # Description: Function for adding books to the user's database
 
 
-from database import establish_database_connection, execute_sql_query
+from database import execute_sql_query
 from flask import session
 
 # -- BOOK DATA ------------------------------------
@@ -65,15 +65,9 @@ def insert_book(ivalues):
         Returns:
             result (list): The result of the query execution.
     """
-    try:
-        query = ("INSERT INTO books (bID, title, pages, rating, date_added, date_published, number_in_series) "
-                 "VALUES (%s, %s, %s, %s, %s, %s, %s)")
-        return execute_sql_query(query, ivalues)
-        # return insert_account_books()
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Rollback the changes and close the cursor and database connection
-        mydb.rollback()
+    query = ("INSERT INTO books (bID, title, pages, rating, date_added, date_published, number_in_series) "
+             "VALUES (%s, %s, %s, %s, %s, %s, %s)")
+    return execute_sql_query(query, ivalues)
 
 
 # -- AUTHOR DATA -----------------------------------
@@ -107,14 +101,8 @@ def insert_author(ivalues):
         Returns:
             result (list): The result of the query execution.
     """
-    try:
-        query = "INSERT INTO authors (aID, firstname, lastname) VALUES (%s, %s, %s)"
-        execute_sql_query(query, ivalues)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Rollback the changes and close the cursor and database connection
-        mydb.rollback()
-        return None
+    query = "INSERT INTO authors (aID, firstname, lastname) VALUES (%s, %s, %s)"
+    execute_sql_query(query, ivalues)
 
 
 def insert_book_author(author_query_value):
@@ -128,16 +116,10 @@ def insert_book_author(author_query_value):
         Returns:
             result (list): The result of the query execution.
     """
-    try:
-        # Inserts book into account_books table
-        query = "INSERT INTO book_author (bID, aID) VALUES (%s, %s);"
-        qvalues = (session['bID'], author_query_value)
-        return execute_sql_query(query, qvalues)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Rollback the changes and close the cursor and database connection
-        mydb.rollback()
-        return None
+    # Inserts book into account_books table
+    query = "INSERT INTO book_author (bID, aID) VALUES (%s, %s);"
+    qvalues = (session['bID'], author_query_value)
+    return execute_sql_query(query, qvalues)
 
 
 # -- GENRE DATA -----------------------------------
@@ -170,15 +152,9 @@ def insert_book_genre(genre_query_value):
         Returns:
             result (list): The result of the query execution.
     """
-    try:
-        query = "INSERT INTO book_genre (bID, gID) VALUES (%s, %s);"
-        qvalues = (session['bID'], genre_query_value)
-        return execute_sql_query(query, qvalues)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Rollback the changes and close the cursor and database connection
-        mydb.rollback()
-        return None
+    query = "INSERT INTO book_genre (bID, gID) VALUES (%s, %s);"
+    qvalues = (session['bID'], genre_query_value)
+    return execute_sql_query(query, qvalues)
 
 
 def insert_genre(ivalues):
@@ -191,14 +167,8 @@ def insert_genre(ivalues):
         Returns:
             result (list): The result of the query execution.
     """
-    try:
-        query = "INSERT INTO genre (gID, genre) VALUES (%s, %s)"
-        return execute_sql_query(query, ivalues)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Rollback the changes and close the cursor and database connection
-        mydb.rollback()
-        return None
+    query = "INSERT INTO genre (gID, genre) VALUES (%s, %s)"
+    return execute_sql_query(query, ivalues)
 
 
 # -- PUBLISHER DATA -----------------------------------
@@ -232,16 +202,10 @@ def insert_book_publisher(publisher_query_value):
         Returns:
             result (list): The result of the query execution.
     """
-    try:
-        # Inserts book into account_books table
-        query = "INSERT INTO book_publisher (bID, pID) VALUES (%s, %s);"
-        qvalues = (session['bID'], publisher_query_value)
-        return execute_sql_query(query, qvalues)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Rollback the changes and close the cursor and database connection
-        mydb.rollback()
-        return None
+    # Inserts book into account_books table
+    query = "INSERT INTO book_publisher (bID, pID) VALUES (%s, %s);"
+    qvalues = (session['bID'], publisher_query_value)
+    return execute_sql_query(query, qvalues)
 
 
 def insert_publisher(ivalues):
@@ -254,14 +218,8 @@ def insert_publisher(ivalues):
         Returns:
             result (list): The result of the query execution.
     """
-    try:
-        query = "INSERT INTO publisher (pID, publisher) VALUES (%s, %s)"
-        return execute_sql_query(query, ivalues)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Rollback the changes and close the cursor and database connection
-        mydb.rollback()
-        return None
+    query = "INSERT INTO publisher (pID, publisher) VALUES (%s, %s)"
+    return execute_sql_query(query, ivalues)
 
 
 # -- SERIES DATA -----------------------------------
@@ -294,16 +252,10 @@ def insert_book_series(series_query_value):
         Returns:
             result (list): The result of the query execution.
     """
-    try:
-        # Inserts book into account_books table
-        query = "INSERT INTO book_series (bID, sID) VALUES (%s, %s);"
-        qvalues = (session['bID'], series_query_value)
-        return execute_sql_query(query, qvalues)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Rollback the changes and close the cursor and database connection
-        mydb.rollback()
-        return None
+    # Inserts book into account_books table
+    query = "INSERT INTO book_series (bID, sID) VALUES (%s, %s);"
+    qvalues = (session['bID'], series_query_value)
+    return execute_sql_query(query, qvalues)
 
 
 def insert_series(ivalues):
@@ -316,14 +268,9 @@ def insert_series(ivalues):
         Returns:
             result (list): The result of the query execution.
     """
-    try:
-        query = "INSERT INTO series (sID, seriesName) VALUES (%s, %s)"
-        return execute_sql_query(query, ivalues)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        # Rollback the changes and close the cursor and database connection
-        mydb.rollback()
-        return None
+
+    query = "INSERT INTO series (sID, seriesName) VALUES (%s, %s)"
+    return execute_sql_query(query, ivalues)
 
 
 # -- UPDATES DATA IN DATABASE -- #

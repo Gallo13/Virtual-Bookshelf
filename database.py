@@ -59,6 +59,9 @@ def execute_sql_query(query, qvalues):
         print("Error Code: ", err.errno)
         print("SQLSTATE: ", err.sqlstate)
         print("Message: ", err.msg)
+        # Rollback the changes and close the cursor and database connection
+        mydb.rollback()
+        return None
     finally:
         mydb.commit()
         cursor.close()

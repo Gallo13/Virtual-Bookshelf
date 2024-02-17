@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Created date: 09/01/2023
-# Last Modified: 01/31/2023
+# Last Modified: 02/16/2023
 # Description: Virtual Bookshelf Webapp/Storage
 # Python, Flask, MySQL
 
@@ -12,19 +12,21 @@ import hashlib
 import re
 import os
 
-from flask import Flask, Blueprint, render_template, redirect, url_for, request, session
+from flask import Flask, render_template, request, session
 from datetime import datetime
 from uuid import uuid4
 
-from database import establish_database_connection, execute_sql_query
+from database import execute_sql_query
 from charts import top_books, top_authors, oldest_books, longest_series, top_genres
 from add_book import check_book_exists, check_author_exists, check_genre_exists, check_publisher_exists, \
     check_series_exists, insert_account_books, insert_book_author, insert_book_genre, insert_book_publisher, \
-    insert_book_series, insert_book, insert_author, insert_genre, insert_publisher, insert_series, update_read, \
-    update_series
+    insert_book_series, insert_book, insert_author, insert_genre, insert_publisher, insert_series, update_series, \
+    update_read
 
-auth = Flask(__name__, template_folder='HTML', static_folder='')
+# auth = Flask(__name__, template_folder='Templates', static_folder='static')
+auth = Flask(__name__, template_folder='Templates')
 auth.secret_key = os.getenv('SECRET_KEY')
+
 
 # Add the function by name to the jinja environment.
 auth.jinja_env.globals.update(top_books=top_books)
@@ -111,7 +113,7 @@ def register():
         # Check if account exists using MySQL
         query = "SELECT * FROM accounts WHERE email = %s"
         qvalues = email
-        account_query_value = execute_sql_query(query, qvalues)
+        account_query_value = execute_sql_query(query, (qvalues,))
 
         # If account exists show error and validation checks
         if account_query_value:
@@ -191,7 +193,7 @@ def get_data():
 
             # -- BOOK ----------------------------------------------
             # Checks if book already exists in database (books table) - executes SELECT statement
-            book_query_value = check_book_exists(title, pages, date_published)
+            book_query_value = check_book_exists(title, int(pages), date_published)
             # If book exists in database (books table)
             if book_query_value is not None:
                 session['bID'] = book_query_value
@@ -203,7 +205,7 @@ def get_data():
                 ivalue = (str(uuid4()), title, int(pages), rating, date_added, date_published, number_in_series)
                 insert_book(ivalue)
                 # Checks for updated book in DB
-                book_query_value = check_book_exists(title, pages, date_published)
+                book_query_value = check_book_exists(title, int(pages), date_published)
                 session['bID'] = book_query_value
                 # Adds book to user (bID into account_books table)
                 insert_account_books()
@@ -297,13 +299,13 @@ def get_data():
                         series_query_value = check_series_exists(series)
                         # Insert genre into book_genres table (register genre under current book)
                         insert_book_series(series_query_value)
-                        update_series_data(number_in_series)
+                        update_series(number_in_series)
 
                 # -- READ ----------------------------------------------
                 # Updates rating of books if user has read checked
                 # if read_checkbox == 'True' and rating != '':
                 if read_checkbox != 'None' and rating is not None:
-                    update_read_data(rating)
+                    update_read(rating)
         finally:
             # Clears session['bID'] - not sure if I really need this - will try with and without
             session['bID'] = None

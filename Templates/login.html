@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>My Virtual Bookshelf</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cormorant Garamond">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://kit.fontawesome.com/efc02a65e2.js" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<!-- Plotly.js -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+<script>
+    // Series collpase if check box is unchecked
+    function seriesCollapse()
+    {
+      // Get the checkbox
+      var series_checkBox = document.getElementById("mySeriesCheck");
+      // Get the output text
+      var text = document.getElementById("seriesText");
+
+      // If the checkbox is checked, display the output text
+      if (series_checkBox.checked == true){
+        text.style.display = "block";
+      } else {
+        text.style.display = "none";
+      }
+    }
+</script>
+<script>
+    // Series collpase if check box is unchecked
+    function readCollapse()
+    {
+      // Get the checkbox
+      var read_checkBox = document.getElementById("myReadCheck");
+      // Get the output text
+      var text = document.getElementById("readText");
+
+      // If the checkbox is checked, display the output text
+      if (read_checkBox.checked == true){
+        text.style.display = "block";
+      } else {
+        text.style.display = "none";
+      }
+    }
+</script>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Cormorant Garamond", serif;
+  background-color: #1B201E;
+  color: #C4BAA6;
+  letter-spacing: 0em;
+}
+
+/* Style the header */
+header {
+  padding: 00px;
+  text-align: center;
+}
+
+/* Container for flexboxes */
+.section {
+  display: -webkit-flex;
+  display: flex;
+  align-self: center;
+  flex-direction: row;
+}
+
+/* Style the couch picture */
+.couch {
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+
+/* Style the Adding Content Section */
+adding {
+  -webkit-flex: 3;
+  -ms-flex: 3;
+  flex: 3;
+  background-color: #f1f1f1;
+  padding: 10px;
+}
+
+/* Style the footer */
+footer {
+  padding: 10px;
+  text-align: center;
+}
+
+/* Container with library image and My Virtual Bookshelf */
+.headContainer
+{
+    position: relative;
+    text-align: center;
+}
+
+/* Centers My Virtual Bookshelf in Library Image */
+.centered
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 135px;
+}
+
+.centeredTop
+{
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 25px;
+}
+
+.textbox
+{
+    border: none;
+    border-bottom: 2px solid #502B09;
+    background-color: #1B201E;
+    color: #C4BAA6;
+}
+
+/* Responsive layout - makes the menu and the content (inside the section) sit on top of each other instead of next to each other */
+@media (max-width: 600px) {
+  section {
+    -webkit-flex-direction: column;
+    flex-direction: column;
+  }
+
+/* Remove Input Number Arrows for Chome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button
+{
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove Input Number Arrows for Firefox */
+input[type=number]
+{
+  -moz-appearance: textfield;
+}
+}
+</style>
+</head>
+<body>
+
+<!-- Sticky Nav Bar------------------------------------------------------------>
+<nav class="navbar navbar-expand-sm sticky-top" style="background-color:#101412; padding: 2px 10px 2px 10px;">
+    <!--<input class="w3-btn w3-round-xxlarge w3-ripple" data-bs-toggle="modal" data-bs-target="#myModal" value="LOGIN" style="background-color:#502B09">-->
+    <div class="container-fluid">
+        <span class="navbar-text" style="color:#C4BAA6;">
+            {{ session['email']}}
+        </span>
+        {{ msg }}
+        <div class="justify-content-end">
+            <button class="btn btn-primary justify-content-end" type="button" style="background-color:#502B09;" data-bs-toggle="modal" data-bs-target="#loginModal">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<!-- MODAL FOR LOGOUT ---------------------------------------------------------->
+<!-- The Modal -->
+<div class="modal fade" id="loginModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content justify-content-center" style="font-family:'Cormorant Garamond', serif; background-color:#1B201E">
+
+      <!-- Modal Header -->
+      <div class="modal-header justify-content-center">
+        <h4 class="modal-title">LOGOUT</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form action="/logout">
+            <button class="btn btn-outline-light btn-lg px-5" type="submit">Logout</button>
+        </form>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Adding to Library -------------------------------------------------------->
+<div class="w3-display-container section w3-mobile w3-responsive">
+  <div class="w3-container couch" style="padding-left:0px"><img class="w3-image" src="images/spiral-staircase-877834.jpg" style="width:100%; height:100%;"></div>
+
+  <div class="w3-panel adding w3-padding-48 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+    <p class='w3-padding-large' style="font-size:4.5vw;">Add a Book to Your Library</p>
+    <form class="w3-container was-validated" style="font-size:1vw;" method="POST" action="/get_data">
+        <!-- TITLE -->
+        <label for="title">Title:</label>
+        <input class="w3-input textbox" type="text" name="title" id="title"><br>
+
+        <!-- AUTHOR FIRST NAME-->
+        <div class="w3-half">
+            <label for="author_fname">Author First Name:</label>
+            <input class="w3-input textbox" type="text" name="author_fname" id="author_fname" value=""><br>
+        </div>
+
+        <!-- AUTHOR LAST NAME-->
+        <div class="w3-half">
+            <label for="author_lname">Author Last Name:</label>
+            <input class="w3-input textbox" type="text" name="author_lname" id="author_lname" value=""><br>
+        </div>
+
+        <!-- GENRE -->
+        <label for="genre">Genre:</label>
+        <input class="w3-input textbox" type="text" name="genre" id="genre" value=""><br>
+
+        <!-- PUBLISHER -->
+        <label for="publisher">Publisher:</label>
+        <input class="w3-input textbox" type="text" name="publisher" id="publisher" value=""><br>
+
+        <div class="w3-row">
+            <!-- PAGES -->
+            <div class="w3-col s4 w3-center">
+                <label for="pages">Pages:</label>
+                <input class="w3-input textbox" type="number" name="pages" id="pages" min="1" value=""><br>
+            </div>
+
+            <!-- DATE PUBLISHED -->
+            <div class="w3-col s4 w3-center">
+                <label for="date_published">Original Publish Date:</label><br>
+                <input id="date_published" name="date_published" type="date">
+            </div>
+
+            <div>
+                <!-- Read CHECKBOX -->
+                <label> Read it already? </label>
+                <input type="checkbox" name="read_checkbox" id="myReadCheck" onclick="readCollapse();">
+
+                <!-- RATING -->
+                <div class="w3-col s4 w3-center" id="readText" style="back-ground:#1B201E; display:none;">
+                    <label for="ratingSelect">Rating:</label>
+                    <select class="w3-select" name="rating" id="ratingSelect" style="back-ground:#1B201E">
+                      <option value="" selected>Select a Rating</option>
+                      <option value="1">1 Star</option>
+                      <option value="2">2 Stars</option>
+                      <option value="3">3 Stars</option>
+                      <option value="4">4 Stars</option>
+                      <option value="5">5 Stars</option>
+                    </select><br><br><br>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <!-- SERIES -->
+        <div>
+            <!-- SERIES CHECKBOX -->
+            <label> Part of a Series?   </label>
+            <input type="checkbox" name="series_checkbox" id="mySeriesCheck" onclick="seriesCollapse()">
+
+            <!-- SERIES DROPDOWN AFTER CHECKBOX -->
+            <div id="seriesText" style="display:none">
+                <br>
+                <div class="w3-half">
+                    <!-- SERIES NAME -->
+                    <label for="series">Series Name:</label>
+                    <input class="w3-input textbox" type="text" name="series" id="series" value=""><br>
+                </div>
+                <!-- SERIES NUMBER -->
+                <div class="w3-half">
+                    <label for="seriesNum">Number in Series:</label>
+                    <input class="w3-input textbox" type="number" name="seriesNum" id="seriesNum" min="1" value=""><br>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADD AND CLEAR BUTTONS -->
+        <div class="w3-container">
+            <br><br><br>
+            <input class="w3-btn w3-round-xxlarge w3-ripple" type="submit" value="Add" style="background-color:#502B09">
+            <input class="w3-btn w3-round-xxlarge w3-ripple" type="reset" value="Clear" style="background-color:#502B09">
+        </div>
+    </form>
+  </div>
+</div>
+
+<! -- Update a Book Rating ---------------------------------------------------->
+<div class="w3-display-container section w3-mobile w3-responsive">
+  <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+    <p class='w3-padding-large' style="font-size:4.5vw;">
+        Have a book you finally read<br>
+        and want to give it a rating?<br>
+    </p>
+    <form class="w3-container was-validated" style="font-size:1vw;" method="POST" action="/update_rating">
+        <div class="w3-row">
+                <p style="font-size:1.5vw;"> Search book by ISBN! </p>
+                <!-- ISBN Selection -->
+                <div class="w3-col s4 w3-center">
+                    <label for="pages">ISBN:</label>
+                    <input class="w3-input textbox" type="text" name="ISBN" id="isbn" value=""><br>
+                </div>
+                <!-- TEST -->
+                <div class="w3-col s4 w3-center">
+                    <label for="pages">Rating:</label>
+                    <input class="w3-input textbox" type="number" name="rating3" id="rating3" value=""><br>
+                </div>
+                <!-- Rating -->
+                <div class="w3-col s4 w3-center" style="back-ground:#1B201E; display:none;">
+                        <label for="ratingSelect">Rating:</label>
+                        <select class="w3-select" name="rating2" id="ratingSelect2" style="back-ground:#1B201E">
+                          <option value="" selected>Select a Rating</option>
+                          <option value="1">1 Star</option>
+                          <option value="2">2 Stars</option>
+                          <option value="3">3 Stars</option>
+                          <option value="4">4 Stars</option>
+                          <option value="5">5 Stars</option>
+                        </select>
+                </div>
+        </div>
+    </form>
+  </div>
+   <div class="w3-container couch" style="padding-right:0px">
+       <img class="w3-image" src="images/book.png" style="width:100%; height:100%;">
+   </div>
+</div>
+
+<!-- Analytics ---------------------------------------------------------------->
+<div class="w3-display-container w3-mobile w3-responsive">
+  <img class="w3-image" src='images/pierre-bamin-6UwDRxbMfIk-unsplash.jpg' alt="Library" style="width:100%;">
+  <div class="w3-display-middle adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+      <p class='w3-padding-large' style="font-size:4.5vw;">Analytics</p>
+    <!---------------------------------->
+     <div class="card text-center" style="background-color:#101412; color:#C4BAA6;">
+      <div class="card-header">
+        <nav>
+          <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav-rated-tab" data-bs-toggle="tab" data-bs-target="#nav-rated" type="button" role="tab" aria-controls="nav-rated" aria-selected="true">Top Rated Books</button>
+            <button class="nav-link" id="nav-authors-tab" data-bs-toggle="tab" data-bs-target="#nav-authors" type="button" role="tab" aria-controls="nav-authors" aria-selected="false">Top Authors</button>
+            <button class="nav-link" id="nav-genres-tab" data-bs-toggle="tab" data-bs-target="#nav-genres" type="button" role="tab" aria-controls="nav-genres" aria-selected="false">Top Genres</button>
+            <button class="nav-link" id="nav-series-tab" data-bs-toggle="tab" data-bs-target="#nav-series" type="button" role="tab" aria-controls="nav-series" aria-selected="false">Longest Series</button>
+            <button class="nav-link" id="nav-published-tab" data-bs-toggle="tab" data-bs-target="#nav-published" type="button" role="tab" aria-controls="nav-published" aria-selected="false">Oldest Published</button>
+          </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+          <div class="tab-pane fade show active" id="nav-rated" role="tabpanel" aria-labelledby="nav-rated-tab">
+              <div>{{ top_books()|safe }}</div>
+          </div>
+          <div class="tab-pane fade" id="nav-authors" role="tabpanel" aria-labelledby="nav-authors-tab">
+              <div>{{ top_authors()|safe }}</div>
+          </div>
+          <div class="tab-pane fade" id="nav-published" role="tabpanel" aria-labelledby="nav-published-tab">
+              <div>{{ oldest_books()|safe }}</div>
+          </div>
+          <div class="tab-pane fade" id="nav-series" role="tabpanel" aria-labelledby="nav-series-tab">
+              <div>{{ longest_series()|safe }}</div>
+          </div>
+          <div class="tab-pane fade" id="nav-genres" role="tabpanel" aria-labelledby="nav-genres-tab">
+              <div>{{ top_genres()|safe }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recommender  -------------------------------------------------------->
+<div class="w3-display-container section w3-mobile w3-responsive">
+  <div class="w3-container couch" style="padding-left:0px"><img class="w3-image" src="images/henry-be-TCsCykbwSJw-unsplash.jpg" style="width:100%; height:100%;"></div>
+
+  <div class="w3-panel adding w3-padding-48 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+    <p class='w3-padding-large' style="font-size:4.5vw;">Add a Book to Your Library</p>
+    <form class="w3-container was-validated" style="font-size:1vw;" method="POST" action="/get_data">
+        <!-- TITLE -->
+        <label for="title">Title:</label>
+        <input class="w3-input textbox" type="text" name="title" id="title2"><br>
+
+        <!-- AUTHOR FIRST NAME-->
+        <div class="w3-half">
+            <label for="author_fname">Author First Name:</label>
+            <input class="w3-input textbox" type="text" name="author_fname" id="author_fname2" value=""><br>
+        </div>
+
+        <!-- AUTHOR LAST NAME-->
+        <div class="w3-half">
+            <label for="author_lname">Author Last Name:</label>
+            <input class="w3-input textbox" type="text" name="author_lname" id="author_lname2" value=""><br>
+        </div>
+
+        <!-- GENRE -->
+        <label for="genre">Genre:</label>
+        <input class="w3-input textbox" type="text" name="genre" id="genre2" value=""><br>
+
+        <!-- SERIES -->
+        <label for="series">Series Name:</label>
+        <input class="w3-input textbox" type="text" name="series" id="series2" value="">
+
+        <!-- ADD AND CLEAR BUTTONS -->
+        <div class="w3-container">
+            <br><br><br>
+            <input class="w3-btn w3-round-xxlarge w3-ripple" type="submit" value="Recommend!" style="background-color:#502B09">
+            <input class="w3-btn w3-round-xxlarge w3-ripple" type="reset" value="Clear" style="background-color:#502B09">
+        </div>
+    </form>
+  </div>
+</div>
+
+<!-- Purpose and Functionality ------------------------------------------------>
+<div class="w3-display-container section w3-mobile w3-responsive">
+  <div class="w3-panel adding w3-padding-64 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
+    <p class='w3-padding-large' style="font-size:4.5vw;">Purpose and Functionality</p>
+    <p class='w3-padding-large w3-center' style="font-size:2vw;">
+        Explore your Virtual Bookshelf – a digital haven for cataloging and <br>
+        preserving the library of books you've read and collected. Powered by <br>
+        cutting-edge technologies including Python, MySQL, and Flask, this <br>
+        dynamic platform enables seamless updates to your book database. Included is <br>
+        integrated data analytics to uncover insights into your reading habits. <br>
+        Looking ahead, I have exciting plans to introduce a personalized <br>
+        content-based recommender system, enhancing your experience by suggesting <br>
+        books tailored to your unique preferences. Join me on this literary journey <br>
+        as your Virtual Bookshelf continues to evolve and grow. <br>
+    </p>
+  </div>
+   <div class="w3-container couch" style="padding-right:0px"><img class="w3-image" src="images/table.jpg" style="width:100%; height:100%;"></div>
+</div>
+
+<footer class="w3-mobile w3-responsive w3-padding-24">
+  <a href='https://www.linkedin.com/in/jessgallo13/' style="color:#C4BAA6;">
+    <button class="w3-button w3-circle w3-ripple"><i class="fa-brands fa-linkedin-in"></i></button>
+  </a>
+  <a href='https://github.com/Gallo13' style="color:#C4BAA6;">
+      <button class="w3-button w3-circle w3-ripple"><i class="fa-brands fa-github"></i></button>
+  </a>
+</footer>
+</body>
+</html>
