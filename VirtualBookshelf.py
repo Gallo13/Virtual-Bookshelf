@@ -12,7 +12,7 @@ import hashlib
 import re
 import os
 
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, send_from_directory
 from datetime import datetime
 from uuid import uuid4
 
@@ -43,6 +43,11 @@ auth.jinja_env.globals.update(top_genres=top_genres)
 def home():
     session['loggedin'] = False
     return render_template('index.html')
+
+
+@auth.route('/images/<path:filename>')
+def serve_image(filename):
+    return send_from_directory('images', filename)
 
 
 # ======================================================================================================================
