@@ -45,6 +45,7 @@ def home():
     return render_template('index.html')
 
 
+# Creates static file path for images
 @auth.route('/images/<path:filename>')
 def serve_image(filename):
     return send_from_directory('images', filename)
