@@ -66,14 +66,14 @@ create table book_series
 
 create table accounts
 (
-    aID			char(36) NOT NULL PRIMARY KEY,
+    uID			char(36) NOT NULL PRIMARY KEY,
     email		varchar(100) NOT NULL,
     password	varchar(50) NOT NULL
 );
 
 create table account_books
 (
-    aID		char(36) NOT NULL,
+    uID		char(36) NOT NULL,
     bID		char(36) NOT NULL,
     CONSTRAINT FOREIGN KEY (bID) REFERENCES books(bID),
     CONSTRAINT FOREIGN KEY (aID) REFERENCES accounts(aID)
