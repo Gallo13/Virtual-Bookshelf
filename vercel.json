@@ -3,14 +3,14 @@
     "version": 2,
     "builds": [
         {
-            "src": "VirtualBookshelf.py",
+            "src": "Virtual-Bookshlef.py",
             "use": "@vercel/python"
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "VirtualBookShelf.py"
+            "dest": "Virtual-Bookshlef.py"
         }
     ]
 }
