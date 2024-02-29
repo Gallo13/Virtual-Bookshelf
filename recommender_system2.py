@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Date Created: 01/16/2024
-# Last Modified: 02/26/2024
+# Last Modified: 01/16/2024
 # Description: Recommender System based on user's genre list, author list, and books in library.
 # The recommender uses book description and vectorizes it and figures out bok recommendation based on
 # the cosine similarity. It uses the GoodReads dataset
@@ -11,7 +11,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Load dataset
-file = 'C://Users//Gallo//Downloads//archive//books.csv'
+file = '../books.csv'
 data = pd.read_csv(file, header=None, sep='\t')
 
 
@@ -48,7 +48,7 @@ print(book_info_df.info())
 print(book_info_df.isnull().any())
 
 # Data Cleaning
-#cosine
+
 
 #
 

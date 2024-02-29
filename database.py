@@ -66,3 +66,4 @@ def execute_sql_query(query, qvalues):
         mydb.commit()
         cursor.close()
         mydb.close()
+        
