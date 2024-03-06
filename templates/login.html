@@ -204,21 +204,20 @@ input[type=number]
 
   <div class="w3-panel adding w3-padding-48 w3-responsive" style="font-family:'Cormorant Garamond', serif;">
     <p class='w3-padding-large' style="font-size:4.5vw;">Add a Book to Your Library</p>
-    <form class="w3-container was-validated" style="font-size:1vw;" method="POST" action="/get_data">
+    <form class="w3-container was-validated" style="font-size:1vw;" method="POST" action="/scan_barcode">
         <div class="w3-row">
             <div class="w3-col s6">
                 <!-- ISBN -->
                 <label for="isbn">ISBN:</label>
                 <!-- bind this button with opening camera app to scan barcode -->
-                <input class="w3-input textbox" type="number" name="isbn" id="isbnn"><br>
+                <input class="w3-input textbox" type="number" name="isbn" id="isbn" value="{isbn}"><br>
             </div>
             <div class="w3-col s6">
-                <i class="fa-solid fa-barcode"></i>
-            </div>
-            <div class="w3-col s6">
-                OR INPUT
+                <button type="submit" class="btn" name="barcode"><i class="fa-solid fa-barcode"></i></button>
             </div>
         </div>
+    </form>
+    <form class="w3-container was-validated" style="font-size:1vw;" method="POST" action="/get_data">
         <!-- TITLE -->
         <label for="title">Title:</label>
         <input class="w3-input textbox" type="text" name="title" id="title"><br>
@@ -322,7 +321,7 @@ input[type=number]
                 <!-- ISBN Selection -->
                 <div class="w3-col s4 w3-center">
                     <label for="pages">ISBN:</label>
-                    <input class="w3-input textbox" type="text" name="ISBN" id="isbn" value=""><br>
+                    <input class="w3-input textbox" type="text" name="rec_isbn" id="rec_isbn" value=""><br>
                 </div>
                 <!-- TEST -->
                 <div class="w3-col s4 w3-center">
