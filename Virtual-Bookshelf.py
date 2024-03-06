@@ -16,6 +16,7 @@ import os
 from flask import Flask, render_template, request, send_from_directory
 from datetime import datetime
 
+
 from charts import *
 from add_book import *
 from account_login import *
@@ -150,6 +151,7 @@ def register():
 @auth.route('/get_data', methods=['POST'])
 def get_data():
     # get user input
+    isbn = request.form['isbn']
     title = request.form['title']
     author_fname = request.form['author_fname']
     author_lname = request.form['author_lname']
@@ -179,7 +181,7 @@ def get_data():
     # If user is logged in
     if request.method == 'POST' and session['loggedin'] is True:
         # Checks if form is filled out
-        if not any([title, author_fname, author_lname, genre, publisher, pages, date_published]):
+        if not any([isbn, title, author_fname, author_lname, genre, publisher, pages, date_published]):
             msg = 'Please fill out the form!'
             return render_template(login, msg=msg)
 
@@ -189,7 +191,7 @@ def get_data():
 
             # -- BOOK ----------------------------------------------
             # Checks if book already exists in database (books table) - executes SELECT statement
-            book_query_value = check_book_exists(title, int(pages), date_published)
+            book_query_value = check_book_exists(isbn)
             # If book exists in database (books table)
             if book_query_value is not None:
                 session['bID'] = book_query_value
@@ -198,10 +200,10 @@ def get_data():
             else:
                 # If book does not exist in database (books table) then we need to insert the book into the database.
                 # Insert book into database
-                ivalue = (str(uuid4()), title, int(pages), rating, date_added, date_published, number_in_series)
+                ivalue = (isbn, title, int(pages), rating, date_added, date_published, number_in_series)
                 insert_book(ivalue)
                 # Checks for updated book in DB
-                book_query_value = check_book_exists(title, int(pages), date_published)
+                book_query_value = check_book_exists(isbn)
                 session['bID'] = book_query_value
                 # Adds book to user (bID into account_books table)
                 insert_account_books()
@@ -310,15 +312,61 @@ def get_data():
 
 @auth.route('/scan_barcode', methods=['GET', 'POST'])
 def scan_barcode():
-    """
-    barcode scanner function
-    isbn google book api scrapping
-    insert variables into textboxes
+    print('You clicked the barcode')
 
-    :return:
-    """
-    # finish
-    return render_template(login, isbn=isbn, author=authors, publisher=publisher)
+    def read_barcode(frame):
+        barcodes = pyzbar.decode(frame)
+        barcode_info = None
+        print('barcode_info', barcode_info)
+        for barcode in barcodes:
+            x, y, w, h = barcode.rect
+            # take the information from the barcode
+            barcode_info = barcode.data.decode('utf-8')
+            # validate ISBN
+            if barcode_info:
+                # draw a rectangle around the barcode
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+                # put text on top of rectangle so information can be read as text
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(frame, barcode_info, (x + 6, y - 6), font, 2.0, (255, 255, 255), 1)
+                break
+        # returns the ISBN
+        return barcode_info
+
+    def print_barcode():
+        """
+        Captures video from the camera and scans barcodes in real-time.
+        Returns:
+            The ISBN of the barcode if found, otherwise None
+        """
+        # use opencv to turn on the camera
+        camera = cv2.VideoCapture(0)
+        ret, frame = camera.read()
+        isbn_bc = None
+        # use while loop to run the decoding function over and over until 'ESC' key is pressed
+        while ret and not isbn_bc:
+            ret, frame = camera.read()
+            isbn_bc = read_barcode(frame)
+            if isbn_bc:
+                # put text on top of rectangle so information can be read as text
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(frame, isbn_bc, (10, 30), font, 1.0, (255, 0, 0), 3)
+                cv2.imshow('Real Time Barcode Scanner', frame)
+            if cv2.waitKey(1) & 0xFF == 27:
+                break
+        # turn the camera off and close the window for the camera app
+        camera.release()
+        cv2.destroyAllWindows()
+        return isbn_bc
+
+    isbn = print_barcode()
+    if isbn:
+        print('ISBN detected:', isbn)
+    else:
+        print('ISBN not detected')
+
+    return render_template(login, isbn=isbn)
 
 
 if __name__ == '__main__':

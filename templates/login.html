@@ -13,8 +13,6 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <!-- Plotly.js -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
-
 <script>
     // Series collpase if check box is unchecked
     function seriesCollapse()
@@ -210,7 +208,7 @@ input[type=number]
                 <!-- ISBN -->
                 <label for="isbn">ISBN:</label>
                 <!-- bind this button with opening camera app to scan barcode -->
-                <input class="w3-input textbox" type="number" name="isbn" id="isbn" value="{isbn}"><br>
+                <input class="w3-input textbox" type="number" name="isbn" id="isbn" value="{{ isbn }}"><br>
             </div>
             <div class="w3-col s6">
                 <button type="submit" class="btn" name="barcode"><i class="fa-solid fa-barcode"></i></button>

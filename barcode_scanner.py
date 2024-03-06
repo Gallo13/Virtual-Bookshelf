@@ -10,43 +10,46 @@ import cv2
 from pyzbar import pyzbar
 import requests
 
+"""
+Decodes barcodes from the given frame
+Args:
+    frame: The frame to decode barcodes
 
-def read_barcodes(frame):
-    barcodes = pyzbar.decode(frame)
-    for barcode in barcodes:
-        x, y, w, h = barcode.rect
-        # take the information from the barcode
-        barcode_info = barcode.data.decode('utf-8')
-        # draw a rectangle around the barcode
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-        # put text on top of rectangle so information can be read as text
-        font = cv2.FONT_HERSHEY_DUPLEX
-        cv2.putText(frame, barcode_info, (x + 6, y - 6), font, 2.0, (255, 255, 255), 1)
-        # return the bounding box of the barcode
-    return frame
+Returns:
+    The ISBN of the barcode found if found, otherwise None.
+"""
 
 
-def print_barcode():
-    # use opencv to turn on the camera
-    camera = cv2.VideoCapture(0)
-    ret, frame = camera.read()
-    # use while loop to run the decoding function over and over until 'ESC' key is pressed
-    while ret:
-        ret, frame = camera.read()
-        frame = read_barcodes(frame)
-        cv2.imshow('Real Time Barcode Scanner', frame)
-        if cv2.waitKey(1) & 0xFF == 27:
-            break
+def validate_isbn(isbn_bc):
+    """
+    Validates the given ISBN
+    Args:
+        isbn_bc (str): The ISBN to validate
 
-    # turn the camera off and close the window for the camera app
-    camera.release()
-    cv2.destroyAllWindows()
+    Returns:
+        True if the ISBN is valid, otherwise False.
+    """
+    if len(isbn_bc) != 13:
+        return False
+
+    # calculate the checksum
+    checksum = 0
+    for i in range(12):
+        digit = int(isbn_bc[i])
+        checksum += digit * (3 if i % 2 == 0 else 1)
+
+    # calculate the check digit
+    check_digit = 10 - (checksum % 10)
+    if check_digit == 10:
+        check_digit = 0
+
+    # check if the check digit matches the last digit of the ISBN
+    return check_digit == int(isbn_bc[-1])
 
 
 def get_book_info(isbn):
     # Fetch data using the ISBN
-    response = requests.get('https://www.googleapis.com/books/v1/volumes?q=isbn:' + barcode_info)
+    response = requests.get('https://www.googleapis.com/books/v1/volumes?q=isbn:' + isbn)
     data = response.json()
     if 'items' in data:
         book_info = data['items'][0]['volumeInfo']

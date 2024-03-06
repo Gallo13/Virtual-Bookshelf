@@ -10,24 +10,22 @@ from flask import session
 # -- BOOK DATA ------------------------------------
 
 
-def check_book_exists(title, pages, date_published):
+def check_book_exists(isbn):
     """
         Checks if books exists in database (books table) using titles, pages and date-published
 
         Parameters:
-            title (str): The values to be queried from database
-            pages (int): The values to be queried from database
-            date_published (str): The values to be queried from database
+            isbn (str): The values to be queried from database
 
         Returns:
             result (list): The result of the query execution.
     """
     # !!!!!!!!!!!!!! should check by title and author instead
     # SQL query to check if the book already exists in the database
-    query = "SELECT bID FROM books WHERE title = %s AND pages = %s AND date_published = %s"
-    qvalues = (title, pages, date_published)
+    query = "SELECT bID FROM books WHERE isbn = %s"
+    qvalues = isbn
     # executes book_query (select statement)
-    book_id = execute_sql_query(query, qvalues)
+    book_id = execute_sql_query(query, (qvalues,))
     return book_id[0][0] if book_id else None
 
 
