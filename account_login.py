@@ -23,7 +23,9 @@ def check_account_exists(email, hash_pw):
 
     query = "SELECT * FROM accounts WHERE email = %s AND password = %s;"
     qvalues = (email, hash_pw)
-    account_id = execute_sql_query(query, (qvalues,))
+    print('check account exists qvalues', qvalues)
+    account_id = execute_sql_query(query, qvalues)
+    print('account id', account_id)
     return account_id[0][0] if account_id else None
 
 

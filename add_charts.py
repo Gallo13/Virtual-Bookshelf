@@ -23,8 +23,7 @@ def check_top_books_exists():
              "WHERE uID = %s "
              "ORDER BY rating DESC LIMIT 5;")
     qvalues = session['uID']
-    top_books = execute_sql_query(query, qvalues)
-    print('top books:', top_books, 'type', type(top_books))
+    top_books = execute_sql_query(query, (qvalues,))
     return top_books if top_books else None
 
 
@@ -44,7 +43,7 @@ def check_top_authors_exists():
                 ORDER BY count DESC
                 LIMIT 5;"""
     qvalues = session['uID']
-    top_author = execute_sql_query(query, qvalues)
+    top_author = execute_sql_query(query, (qvalues,))
     return top_author[0][0:2] if top_author else None
 
 
@@ -61,7 +60,7 @@ def check_oldest_books_exists():
                 WHERE uID = %s 
                 ORDER BY date_published ASC LIMIT 5"""
     qvalues = session['uID']
-    oldest_books = execute_sql_query(query, qvalues)
+    oldest_books = execute_sql_query(query, (qvalues,))
     return oldest_books[0] if oldest_books else None
 
 
@@ -80,7 +79,7 @@ def check_longest_series_exists():
                WHERE uID = %s
                GROUP BY title, s.seriesName;"""
     qvalues = session['uID']
-    longest_series = execute_sql_query(query, qvalues)
+    longest_series = execute_sql_query(query, (qvalues,))
     print('longest series', longest_series)
     return longest_series[0] if longest_series else None
 
@@ -100,6 +99,6 @@ def check_top_genre_exists():
                WHERE ab.uID = %s 
                GROUP BY g.genre;"""
     qvalues = session['uID']
-    top_genre = execute_sql_query(query, qvalues)
+    top_genre = execute_sql_query(query, (qvalues,))
     print('top genre', top_genre)
     return top_genre[0] if top_genre else None
