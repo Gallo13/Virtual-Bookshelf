@@ -316,50 +316,38 @@ def scan_barcode():
 
     def read_barcode(frame):
         barcodes = pyzbar.decode(frame)
-        barcode_info = None
-        print('barcode_info', barcode_info)
+        barcode_read = False
         for barcode in barcodes:
             x, y, w, h = barcode.rect
-            # take the information from the barcode
+            # 1
             barcode_info = barcode.data.decode('utf-8')
-            # validate ISBN
-            if barcode_info:
-                # draw a rectangle around the barcode
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-                # put text on top of rectangle so information can be read as text
-                font = cv2.FONT_HERSHEY_DUPLEX
-                cv2.putText(frame, barcode_info, (x + 6, y - 6), font, 2.0, (255, 255, 255), 1)
-                break
-        # returns the ISBN
-        return barcode_info
+            # 2
+            font = cv2.FONT_HERSHEY_DUPLEX
+            cv2.putText(frame, barcode_info, (x + 6, y - 6), font, 2.0, (255, 255, 255), 1)
+            # 3
+            print("Recognized Barcode:",  barcode_info)
+            barcode_read = True
+        # return the bounding box of the barcode
+        return frame, barcode_read
 
     def print_barcode():
-        """
-        Captures video from the camera and scans barcodes in real-time.
-        Returns:
-            The ISBN of the barcode if found, otherwise None
-        """
-        # use opencv to turn on the camera
         camera = cv2.VideoCapture(0)
         ret, frame = camera.read()
-        isbn_bc = None
-        # use while loop to run the decoding function over and over until 'ESC' key is pressed
-        while ret and not isbn_bc:
+        barcode_read = False
+        while ret and not barcode_read:
             ret, frame = camera.read()
-            isbn_bc = read_barcode(frame)
-            if isbn_bc:
-                # put text on top of rectangle so information can be read as text
-                font = cv2.FONT_HERSHEY_DUPLEX
-                cv2.putText(frame, isbn_bc, (10, 30), font, 1.0, (255, 0, 0), 3)
-                cv2.imshow('Real Time Barcode Scanner', frame)
+            frame = read_barcode(frame)
+            cv2.imshow('Real Time Barcode Scanner', frame)
             if cv2.waitKey(1) & 0xFF == 27:
                 break
-        # turn the camera off and close the window for the camera app
+
         camera.release()
         cv2.destroyAllWindows()
-        return isbn_bc
 
+    print_barcode()
+    """
     isbn = print_barcode()
     if isbn:
         print('ISBN detected:', isbn)
@@ -367,6 +355,7 @@ def scan_barcode():
         print('ISBN not detected')
 
     return render_template(login, isbn=isbn)
+    """
 
 
 if __name__ == '__main__':
