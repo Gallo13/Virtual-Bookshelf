@@ -20,31 +20,26 @@ Returns:
 """
 
 
-def validate_isbn(isbn_bc):
-    """
-    Validates the given ISBN
-    Args:
-        isbn_bc (str): The ISBN to validate
+def read_barcode(frame):
+    barcodes = pyzbar.decode(frame)
+    barcode_read = False
+    isbn_bc = None
+    for barcode in barcodes:
+        x, y, w, h = barcode.rect
+        # take the information from the barcode
+        barcode_info = barcode.data.decode('utf-8')
+        # draw a rectangle around the barcode
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    Returns:
-        True if the ISBN is valid, otherwise False.
-    """
-    if len(isbn_bc) != 13:
-        return False
+        # put text on top of rectangle so information can be read as text
+        font = cv2.FONT_HERSHEY_DUPLEX
+        cv2.putText(frame, barcode_info, (x + 6, y - 6), font, 2.0, (255, 255, 255), 1)
 
-    # calculate the checksum
-    checksum = 0
-    for i in range(12):
-        digit = int(isbn_bc[i])
-        checksum += digit * (3 if i % 2 == 0 else 1)
-
-    # calculate the check digit
-    check_digit = 10 - (checksum % 10)
-    if check_digit == 10:
-        check_digit = 0
-
-    # check if the check digit matches the last digit of the ISBN
-    return check_digit == int(isbn_bc[-1])
+        print("Recognized Barcode:",  barcode_info)
+        barcode_read = True
+        isbn_bc = barcode_info
+    # return the bounding box of the barcode
+    return frame, barcode_read, isbn_bc
 
 
 def get_book_info(isbn):
@@ -60,3 +55,31 @@ def get_book_info(isbn):
         published_date = book_info['publishedDate']
         return title, pages, authors, publisher, published_date
     return None
+
+
+"""
+ def print_barcode():
+        camera = cv2.VideoCapture(0)
+        ret, frame = camera.read()
+        barcode_read = False
+        isbn_bc = None
+        while ret and not barcode_read:
+            ret, frame = camera.read()
+            frame, barcode_read, isbn_bc = read_barcode(frame)
+            cv2.imshow('Real Time Barcode Scanner', frame)
+            if cv2.waitKey(1) & 0xFF == 27:
+                break
+
+        camera.release()
+        cv2.destroyAllWindows()
+        return isbn_bc
+
+    isbn = print_barcode()
+    if isbn:
+        print('ISBN detected:', isbn)
+    else:
+        print('ISBN not detected')
+
+    return render_template(login)
+
+"""

@@ -313,49 +313,23 @@ def get_data():
 @auth.route('/scan_barcode', methods=['GET', 'POST'])
 def scan_barcode():
     print('You clicked the barcode')
-
-    def read_barcode(frame):
-        barcodes = pyzbar.decode(frame)
-        barcode_read = False
-        for barcode in barcodes:
-            x, y, w, h = barcode.rect
-            # 1
-            barcode_info = barcode.data.decode('utf-8')
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-            # 2
-            font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(frame, barcode_info, (x + 6, y - 6), font, 2.0, (255, 255, 255), 1)
-            # 3
-            print("Recognized Barcode:",  barcode_info)
-            barcode_read = True
-        # return the bounding box of the barcode
-        return frame, barcode_read
-
-    def print_barcode():
+    if request.method == 'POST':
         camera = cv2.VideoCapture(0)
         ret, frame = camera.read()
         barcode_read = False
         while ret and not barcode_read:
             ret, frame = camera.read()
-            frame = read_barcode(frame)
+            frame, barcode_read, isbn = read_barcode(frame)
             cv2.imshow('Real Time Barcode Scanner', frame)
-            if cv2.waitKey(1) & 0xFF == 27:
+            if barcode_read:
+                print("ISBN: ", isbn)
+                break
+            elif cv2.waitKey(1) & 0xFF == 27:
                 break
 
         camera.release()
         cv2.destroyAllWindows()
-
-    print_barcode()
-    """
-    isbn = print_barcode()
-    if isbn:
-        print('ISBN detected:', isbn)
-    else:
-        print('ISBN not detected')
-
-    return render_template(login, isbn=isbn)
-    """
+    return render_template(login)
 
 
 if __name__ == '__main__':
