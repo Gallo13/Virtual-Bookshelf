@@ -1,18 +1,12 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "Virtual-Bookshelf.py",
-            "use": "@vercel/python"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/"
-        }
-    ],
-    "env": {
-        "DATABASE_URL": "mysql://username:password@host:port/dbname"
+  "version": 2,
+  "builds": [
+    {
+      "src": "Virtual-Bookshelf.py",
+      "use": "@vercel/python"
     }
+  ],
+  "env": {
+    "DATABASE_URL": "mysql://username:password@host:port/dbname"
+  }
 }
