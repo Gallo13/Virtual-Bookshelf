@@ -11,5 +11,8 @@
             "src": "/(.*)",
             "dest": "Virtual-Bookshelf.py"
         }
-    ]
+    ],
+    "env": {
+        "DATABASE_URL": "mysql://username:password@host:port/dbname"
+    }
 }
