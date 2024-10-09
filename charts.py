@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Date created: 01/19/2024
-# Last modified: 02/25/2024
+# Last modified: 10/09/2024
 # Description: Functions for Plotly charts
 
 
@@ -17,7 +17,11 @@ def count_list(lst):
         Return:
             a count of the lists inside a list
     """
-    return len(lst)
+    try:
+        return len(lst)
+    except Exception as e:
+        print(e)
+        return None
 
 
 def top_books():

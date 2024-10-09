@@ -1,13 +1,14 @@
 # Created by: Jess Gallo
 # Created date: 09/01/2023
-# Last Modified: 03/04/2023
+# Last Modified: 10/09/2023
 # Description: Virtual Bookshelf Webapp/Storage
 # Python, Flask, MySQL
 
 # CHANGE WHERE msg messages go! make into popup!
 # add barcode scanner
 # add book cover scanner
-# add
+# web scrapping with isbn to get author fname, lname, publisher, release date, etc.
+# create separate files for each function to run faster
 
 # Libraries
 import re
@@ -194,7 +195,7 @@ def get_data():
             book_query_value = check_book_exists(isbn)
             # If book exists in database (books table)
             if book_query_value is not None:
-                session['bID'] = book_query_value
+                session['isbn'] = book_query_value
                 # Checks if book is associated with user and if it is not, it insert it into account_books tables
                 insert_account_books()
             else:
@@ -204,8 +205,8 @@ def get_data():
                 insert_book(ivalue)
                 # Checks for updated book in DB
                 book_query_value = check_book_exists(isbn)
-                session['bID'] = book_query_value
-                # Adds book to user (bID into account_books table)
+                session['isbn'] = book_query_value
+                # Adds book to user (isbn into account_books table)
                 insert_account_books()
 
                 # -- AUTHOR -----------------------------
@@ -305,8 +306,8 @@ def get_data():
                 if read_checkbox != 'None' and rating is not None:
                     update_read(rating)
         finally:
-            # Clears session['bID'] - not sure if I really need this - will try with and without
-            session['bID'] = None
+            # Clears session['isbn'] - not sure if I really need this - will try with and without
+            session['isbn'] = None
             return render_template(login)
 
 

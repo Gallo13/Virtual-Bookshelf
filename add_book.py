@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Date created: 01/19/2024
-# Last modified: 02/28/2024
+# Last modified: 010/09/2024
 # Description: Function for adding books to the user's database
 
 
@@ -22,7 +22,7 @@ def check_book_exists(isbn):
     """
     # !!!!!!!!!!!!!! should check by title and author instead
     # SQL query to check if the book already exists in the database
-    query = "SELECT bID FROM books WHERE isbn = %s"
+    query = "SELECT isbn FROM books WHERE isbn = %s"
     qvalues = isbn
     # executes book_query (select statement)
     book_id = execute_sql_query(query, (qvalues,))
@@ -31,21 +31,21 @@ def check_book_exists(isbn):
 
 def insert_account_books():
     """
-        Checks if books exists in database (account_books) using the book_query_value which produces the bID (book ID)
+        Checks if books exists in database (account_books) using the book_query_value which produces the isbn
 
         Returns:
             result (list): The result of the query execution.
     """
     # Check if book exists in account_books table
-    query = "SELECT * FROM account_books WHERE bID = %s AND uID = %s"
-    qvalues = (session['bID'], session['uID2'])
+    query = "SELECT * FROM account_books WHERE isbn = %s AND uID = %s"
+    qvalues = (session['isbn'], session['uID2'])
     account_books_query_value = execute_sql_query(query, qvalues)
 
     # If the book is not associated with the user
     if not account_books_query_value:
         # Inserts book into account_books table
-        query = "INSERT INTO account_books (uID, bID) VALUES (%s, %s);"
-        qvalues = (session['uID2'], session['bID'])
+        query = "INSERT INTO account_books (uID, isbn) VALUES (%s, %s);"
+        qvalues = (session['uID2'], session['isbn'])
         return execute_sql_query(query, qvalues)
     # If user already inputed the book
     else:
@@ -63,7 +63,7 @@ def insert_book(ivalues):
         Returns:
             result (list): The result of the query execution.
     """
-    query = ("INSERT INTO books (bID, title, pages, rating, date_added, date_published, number_in_series) "
+    query = ("INSERT INTO books (isbn, title, pages, rating, date_added, date_published, number_in_series) "
              "VALUES (%s, %s, %s, %s, %s, %s, %s)")
     return execute_sql_query(query, ivalues)
 
@@ -106,7 +106,7 @@ def insert_author(ivalues):
 def insert_book_author(author_query_value):
     """
         Checks if authors exists in database with book (book_author) using the author_query_value which produces
-        the bID (book ID)
+        the isbn (book ID)
 
         Parameters:
             author_query_value (str): The values to be queried from database
@@ -115,8 +115,8 @@ def insert_book_author(author_query_value):
             result (list): The result of the query execution.
     """
     # Inserts book into account_books table
-    query = "INSERT INTO book_author (bID, aID) VALUES (%s, %s);"
-    qvalues = (session['bID'], author_query_value)
+    query = "INSERT INTO book_author (isbn, aID) VALUES (%s, %s);"
+    qvalues = (session['isbn'], author_query_value)
     return execute_sql_query(query, qvalues)
 
 
@@ -142,7 +142,7 @@ def check_genre_exists(genre):
 
 def insert_book_genre(genre_query_value):
     """
-        Checks if genre exists in database (book_genres) using the genre_query_value which produces the bID (book ID)
+        Checks if genre exists in database (book_genres) using the genre_query_value which produces the isbn (book ID)
 
         Parameters:
             genre_query_value (str): The values to be queried from database
@@ -150,8 +150,8 @@ def insert_book_genre(genre_query_value):
         Returns:
             result (list): The result of the query execution.
     """
-    query = "INSERT INTO book_genre (bID, gID) VALUES (%s, %s);"
-    qvalues = (session['bID'], genre_query_value)
+    query = "INSERT INTO book_genre (isbn, gID) VALUES (%s, %s);"
+    qvalues = (session['isbn'], genre_query_value)
     return execute_sql_query(query, qvalues)
 
 
@@ -192,7 +192,7 @@ def check_publisher_exists(publisher):
 def insert_book_publisher(publisher_query_value):
     """
         Checks if publisher exists in database (book_publisher) using the publisher_query_value which produces
-        the bID (book ID)
+        the isbn (book ID)
 
         Parameters:
             publisher_query_value (str): The values to be queried from database
@@ -201,8 +201,8 @@ def insert_book_publisher(publisher_query_value):
             result (list): The result of the query execution.
     """
     # Inserts book into account_books table
-    query = "INSERT INTO book_publisher (bID, pID) VALUES (%s, %s);"
-    qvalues = (session['bID'], publisher_query_value)
+    query = "INSERT INTO book_publisher (isbn, pID) VALUES (%s, %s);"
+    qvalues = (session['isbn'], publisher_query_value)
     return execute_sql_query(query, qvalues)
 
 
@@ -242,7 +242,7 @@ def check_series_exists(series):
 
 def insert_book_series(series_query_value):
     """
-        Checks if series exists in database (book_series) using the series_query_value which produces the bID (book ID)
+        Checks if series exists in database (book_series) using the series_query_value which produces the isbn (book ID)
 
         Parameters:
             series_query_value (str): The values to be queried from database
@@ -251,8 +251,8 @@ def insert_book_series(series_query_value):
             result (list): The result of the query execution.
     """
     # Inserts book into account_books table
-    query = "INSERT INTO book_series (bID, sID) VALUES (%s, %s);"
-    qvalues = (session['bID'], series_query_value)
+    query = "INSERT INTO book_series (isbn, sID) VALUES (%s, %s);"
+    qvalues = (session['isbn'], series_query_value)
     return execute_sql_query(query, qvalues)
 
 
@@ -285,8 +285,8 @@ def update_read(rating):
             result (list): The result of the query execution.
     """
     # SQL query to update read data in account_books table
-    query = "UPDATE books SET rating = %s WHERE bID = %s;"
-    qvalues = (rating, session['bID'])
+    query = "UPDATE books SET rating = %s WHERE isbn = %s;"
+    qvalues = (rating, session['isbn'])
     return execute_sql_query(query, qvalues)
 
 
@@ -301,6 +301,6 @@ def update_series(number_in_series):
             result (list): The result of the query execution.
     """
     # SQL query to update series data in account_books table
-    query = "UPDATE books SET number_in_series = %s WHERE bID = %s;"
-    qvalues = (number_in_series, session['bID'])
+    query = "UPDATE books SET number_in_series = %s WHERE isbn = %s;"
+    qvalues = (number_in_series, session['isbn'])
     return execute_sql_query(query, qvalues)

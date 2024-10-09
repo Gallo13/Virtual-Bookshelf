@@ -1,6 +1,6 @@
 # Created by: Jess Gallo
 # Date created: 02/25/24
-# Last Modified: 02/25/24
+# Last Modified: 10/09/24
 # Description: Queries for charts creation
 
 # Imports
@@ -17,8 +17,8 @@ def check_top_books_exists():
     """
     query = ("SELECT b.title, a.firstname, a.lastname, b.rating "
              "FROM books as b "
-             "JOIN account_books as ab ON b.bID = ab.bID "
-             "JOIN book_author as ba ON b.bID = ba.bID "
+             "JOIN account_books as ab ON b.isbn = ab.isbn "
+             "JOIN book_author as ba ON b.isbn = ba.isbn "
              "JOIN authors as a ON ba.aID = a.aID "
              "WHERE uID = %s "
              "ORDER BY rating DESC LIMIT 5;")
@@ -37,7 +37,7 @@ def check_top_authors_exists():
     query = """SELECT firstname, lastname, COUNT(lastname) as count
                 FROM authors
                 JOIN book_author ON authors.aID = book_author.aID
-                JOIN account_books ON book_author.bID = account_books.bID
+                JOIN account_books ON book_author.isbn = account_books.isbn
                 WHERE account_books.uID = %s
                 GROUP BY firstname, lastname
                 ORDER BY count DESC
@@ -56,7 +56,7 @@ def check_oldest_books_exists():
     """
     query = """SELECT title, date_published
                 FROM books 
-                JOIN account_books ON books.bID = account_books.bID 
+                JOIN account_books ON books.isbn = account_books.isbn 
                 WHERE uID = %s 
                 ORDER BY date_published ASC LIMIT 5"""
     qvalues = session['uID']
@@ -74,8 +74,8 @@ def check_longest_series_exists():
     query = """SELECT b.title, s.seriesName, MAX(b.number_in_series) as NumberInSeries
                FROM series as s
                JOIN book_series as bs ON s.sID = bs.sID
-               JOIN books as b ON bs.bID = b.bID
-               JOIN account_books as ab ON b.bID = ab.bID
+               JOIN books as b ON bs.isbn = b.isbn
+               JOIN account_books as ab ON b.isbn = ab.isbn
                WHERE uID = %s
                GROUP BY title, s.seriesName;"""
     qvalues = session['uID']
@@ -94,8 +94,8 @@ def check_top_genre_exists():
     query = """SELECT g.genre, COUNT(DISTINCT g.genre) as TotalCount
                FROM genre as g
                JOIN book_genre as bg ON g.gID = bg.gID
-               JOIN books as b ON bg.bID = b.bID
-               JOIN account_books as ab ON ab.bID = ab.bID
+               JOIN books as b ON bg.isbn = b.isbn
+               JOIN account_books as ab ON ab.isbn = ab.isbn
                WHERE ab.uID = %s 
                GROUP BY g.genre;"""
     qvalues = session['uID']
