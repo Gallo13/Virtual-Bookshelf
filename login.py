@@ -1,7 +1,7 @@
 # Create by: Jess Gallo
 # Date created: 10/13/2024
 # Last Modified: 10/13/2024
-# Description:
+# Description: login and logout functions
 
 import os
 from account_login import *
@@ -37,3 +37,12 @@ def login():
             session['email'] = email
             session['uID'] = login_query_value
             return render_template('login.html')
+
+
+@login_routes.route('/logout')
+def logout():
+    # Remove session data, this will log the user out
+    session.clear()
+    msg = 'You have successfully logged out'
+    # return redirect(url_for('login.login'))
+    return render_template('index.html', msg=msg)

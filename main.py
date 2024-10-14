@@ -14,7 +14,6 @@ import os
 from flask import Flask
 from home import *
 from login import *
-from logout import *
 from register import *
 from get_data import *
 from scan_barcode import *
@@ -25,7 +24,6 @@ auth.secret_key = os.getenv('SECRET_KEY')
 
 auth.register_blueprint(home_routes)
 auth.register_blueprint(login_routes)
-auth.register_blueprint(logout_routes)
 auth.register_blueprint(register_routes)
 auth.register_blueprint(get_data_routes)
 auth.register_blueprint(scan_barcode_routes)
