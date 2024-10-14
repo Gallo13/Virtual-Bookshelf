@@ -9,7 +9,26 @@ from uuid import uuid4
 import hashlib
 
 
-def check_account_exists(email, hash_pw):
+def check_account_exists(email):
+    """
+        Checks if email is in the database already
+
+        Parameters:
+            email (str): The values to be queried from database
+
+        Returns:
+            result (list): The result of the query
+    """
+
+    query = "SELECT * FROM accounts WHERE email = %s;"
+    qvalues = (email, )
+    print('check account exists qvalues', qvalues)
+    account_id = execute_sql_query(query, qvalues)
+    print('account id', account_id)
+    return account_id[0][0] if account_id else None
+
+
+def login_confirmation(email, hash_pw):
     """
         Checks if user is in the database already
 
